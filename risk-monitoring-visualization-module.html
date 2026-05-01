@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipPulse Risk Monitoring Visualization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #0f1a2b;
+            --bg-ink: #1b2a42;
+            --panel: rgba(255, 255, 255, 0.96);
+            --panel-soft: #f6f8fc;
+            --text-main: #182235;
+            --text-muted: #68758c;
+            --line: rgba(24, 34, 53, 0.12);
+            --accent: #5b6ee1;
+            --accent-deep: #3f55cf;
+            --positive: #4fae78;
+            --shadow: 0 28px 60px rgba(8, 16, 29, 0.24);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Manrope", "Noto Sans SC", sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(91, 110, 225, 0.24), transparent 24%),
+                radial-gradient(circle at 86% 12%, rgba(79, 174, 120, 0.14), transparent 20%),
+                linear-gradient(140deg, var(--bg-deep) 0%, var(--bg-ink) 58%, #314760 100%);
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .page-shell {
+            max-width: 1420px;
+            margin: 0 auto;
+            padding: 30px 20px 48px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .back-link,
+        .module-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 999px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            font-size: 0.95rem;
+        }
+
+        .module-pill {
+            background: linear-gradient(135deg, rgba(91, 110, 225, 0.34), rgba(79, 174, 120, 0.18));
+        }
+
+        .module-panel {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 34px;
+            box-shadow: var(--shadow);
+            padding: 34px;
+        }
+
+        .hero-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+            gap: 24px;
+            align-items: start;
+            margin-bottom: 28px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Space Grotesk", "Noto Sans SC", sans-serif;
+            letter-spacing: 0;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: rgba(91, 110, 225, 0.12);
+            color: var(--accent-deep);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2.2rem, 4vw, 3.7rem);
+            line-height: 1.04;
+            margin-bottom: 14px;
+        }
+
+        .hero-copy p {
+            max-width: 780px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .brand-summary {
+            display: grid;
+            gap: 14px;
+        }
+
+        .brand-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            width: fit-content;
+            padding: 12px 18px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid var(--line);
+            box-shadow: 0 16px 30px rgba(22, 32, 49, 0.08);
+            font-weight: 800;
+        }
+
+        .brand-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+        }
+
+        .summary-note {
+            background: linear-gradient(135deg, #1d2940, #334c70);
+            color: #f5f7fb;
+            border-radius: 24px;
+            padding: 22px;
+            min-height: 132px;
+        }
+
+        .summary-note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .summary-note p {
+            color: rgba(245, 247, 251, 0.78);
+            font-size: 0.95rem;
+        }
+
+        .trend-panel,
+        .visual-card {
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #ffffff, #f8faff);
+            border-radius: 28px;
+            box-shadow: 0 18px 38px rgba(20, 30, 45, 0.08);
+        }
+
+        .trend-panel {
+            padding: 28px;
+            margin-bottom: 26px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .title-block h2 {
+            font-size: clamp(1.45rem, 2vw, 2rem);
+        }
+
+        .title-block p {
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .trend-actions {
+            display: inline-flex;
+            gap: 8px;
+            padding: 6px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #fff;
+        }
+
+        .toggle-btn {
+            min-height: 42px;
+            padding: 0 16px;
+            border: none;
+            border-radius: 13px;
+            color: var(--text-muted);
+            background: transparent;
+            cursor: pointer;
+            font-weight: 800;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .toggle-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            box-shadow: 0 10px 22px rgba(63, 85, 207, 0.2);
+        }
+
+        .trend-frame-shell {
+            overflow: hidden;
+            border: 1px solid rgba(24, 34, 53, 0.12);
+            border-radius: 20px;
+            background: #fff;
+            height: 680px;
+            padding-top: 14px;
+        }
+
+        .trend-frame {
+            display: none;
+            width: 100%;
+            height: 660px;
+            border: 0;
+            vertical-align: top;
+        }
+
+        .trend-frame.active {
+            display: block;
+        }
+
+        .visual-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .visual-card {
+            min-width: 0;
+            padding: 14px;
+        }
+
+        .visual-card h3 {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-main);
+            font-size: clamp(1rem, 1.25vw, 1.28rem);
+            line-height: 1.2;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .visual-frame-shell {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border: 1px solid rgba(24, 34, 53, 0.1);
+            border-radius: 18px;
+            background: #fff;
+        }
+
+        .visual-frame {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #fff;
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: rgba(245, 247, 251, 0.78);
+            text-align: center;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1080px) {
+            .hero-row,
+            .visual-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-panel {
+                padding: 22px;
+            }
+
+            .section-title,
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .trend-frame-shell {
+                height: 520px;
+            }
+
+            .trend-frame {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <div class="topbar">
+            <a class="back-link" href="sippulse-service-home.html">
+                <i class="fas fa-arrow-left"></i>
+                Back to Service Home
+            </a>
+            <div class="module-pill">
+                <i class="fas fa-triangle-exclamation"></i>
+                Risk Monitoring Visualization
+            </div>
+        </div>
+
+        <main class="module-panel">
+            <section class="hero-row">
+                <div class="hero-copy">
+                    <div class="eyebrow">
+                        <i class="fas fa-chart-line"></i>
+                        02 Risk Monitoring Visualization
+                    </div>
+                    <h1>Risk monitoring visuals for reputation signals across social sources.</h1>
+                    <p>
+                        This module moves the emotional trend view out of sentiment classification and pairs it with word-level, tone-level, and source-level risk context.
+                    </p>
+                </div>
+
+                <aside class="brand-summary">
+                    <div class="brand-chip">
+                        <span class="brand-mark"><i class="fas fa-shield-halved"></i></span>
+                        <span>Brand: Nayuki</span>
+                    </div>
+                    <div class="summary-note">
+                        <strong>Current signal</strong>
+                        <p>Aggregated comments from Rednote, Douyin, Weibo, and Dianping are monitored for trend movement, emotional subdivision, and source concentration.</p>
+                    </div>
+                </aside>
+            </section>
+
+            <section class="trend-panel" aria-labelledby="trend-title">
+                <div class="section-title">
+                    <div class="title-block">
+                        <h2 id="trend-title">Emotional trend changes</h2>
+                        <p>Switch between recent daily movement and full-range monthly aggregation.</p>
+                    </div>
+                    <div class="trend-actions" role="group" aria-label="Trend aggregation">
+                        <button class="toggle-btn active" type="button" data-trend="day">Recent Daily Risk</button>
+                        <button class="toggle-btn" type="button" data-trend="month">Long-Term Monthly Trend</button>
+                    </div>
+                </div>
+                <div class="trend-frame-shell">
+                    <iframe class="trend-frame active" id="trend-day" src="risk_monitoring_visuals/emotional_trend_day.html" title="Daily emotional trend changes"></iframe>
+                    <iframe class="trend-frame" id="trend-month" src="risk_monitoring_visuals/emotional_trend_month.html" title="Monthly emotional trend changes"></iframe>
+                </div>
+            </section>
+
+            <section class="visual-grid" aria-label="Risk monitoring detail visualizations">
+                <article class="visual-card">
+                    <h3>Word cloud</h3>
+                    <div class="visual-frame-shell">
+                        <iframe class="visual-frame" src="risk_monitoring_visuals/word_cloud.html" title="Word cloud"></iframe>
+                    </div>
+                </article>
+
+                <article class="visual-card">
+                    <h3>Emotional subdivision distribution</h3>
+                    <div class="visual-frame-shell">
+                        <iframe class="visual-frame" src="risk_monitoring_visuals/emotional_subdivision_distribution.html" title="Emotional subdivision distribution"></iframe>
+                    </div>
+                </article>
+
+                <article class="visual-card">
+                    <h3>Data source distribution</h3>
+                    <div class="visual-frame-shell">
+                        <iframe class="visual-frame" src="risk_monitoring_visuals/data_source_distribution.html" title="Data source distribution"></iframe>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <div class="footer-note">
+            Risk monitoring visuals use the same analyzed records as the sentiment analysis module.
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const buttons = Array.from(document.querySelectorAll("[data-trend]"));
+            const frames = {
+                day: document.getElementById("trend-day"),
+                month: document.getElementById("trend-month"),
+            };
+
+            buttons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const trend = button.dataset.trend;
+                    buttons.forEach((item) => item.classList.toggle("active", item === button));
+                    Object.keys(frames).forEach((key) => {
+                        frames[key].classList.toggle("active", key === trend);
+                    });
+                });
+            });
+        }());
+    </script>
+</body>
+</html>
