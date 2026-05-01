@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipPulse AI-Generated Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #0f1a2b;
+            --bg-ink: #1b2a42;
+            --panel: rgba(255, 255, 255, 0.96);
+            --panel-soft: #f6f8fc;
+            --text-main: #182235;
+            --text-muted: #68758c;
+            --line: rgba(24, 34, 53, 0.12);
+            --accent: #5b6ee1;
+            --accent-deep: #3f55cf;
+            --positive: #4fae78;
+            --negative: #e34d4d;
+            --shadow: 0 28px 60px rgba(8, 16, 29, 0.24);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Manrope", "Noto Sans SC", sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(91, 110, 225, 0.24), transparent 24%),
+                radial-gradient(circle at 86% 12%, rgba(79, 174, 120, 0.14), transparent 20%),
+                linear-gradient(140deg, var(--bg-deep) 0%, var(--bg-ink) 58%, #314760 100%);
+        }
+
+        button,
+        select {
+            font: inherit;
+        }
+
+        .page-shell {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 30px 20px 48px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .back-link,
+        .module-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 999px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            font-size: 0.95rem;
+        }
+
+        .module-pill {
+            background: linear-gradient(135deg, rgba(91, 110, 225, 0.34), rgba(79, 174, 120, 0.18));
+        }
+
+        .module-panel {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 34px;
+            box-shadow: var(--shadow);
+            padding: 34px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: "Space Grotesk", "Noto Sans SC", sans-serif;
+            letter-spacing: 0;
+        }
+
+        .hero-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+            gap: 24px;
+            align-items: start;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: rgba(91, 110, 225, 0.12);
+            color: var(--accent-deep);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2.1rem, 4vw, 3.4rem);
+            line-height: 1.05;
+            margin-bottom: 14px;
+        }
+
+        .hero-copy p {
+            color: var(--text-muted);
+            max-width: 760px;
+            font-size: 1rem;
+        }
+
+        .summary-note {
+            background: linear-gradient(135deg, #1d2940, #334c70);
+            color: #f5f7fb;
+            border-radius: 24px;
+            padding: 22px;
+            min-height: 148px;
+        }
+
+        .summary-note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .summary-note p {
+            color: rgba(245, 247, 251, 0.78);
+            font-size: 0.95rem;
+        }
+
+        .control-panel,
+        .report-panel {
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #ffffff, #f8faff);
+            border-radius: 28px;
+            box-shadow: 0 18px 38px rgba(20, 30, 45, 0.08);
+        }
+
+        .control-panel {
+            padding: 26px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .title-block h2 {
+            font-size: clamp(1.45rem, 2vw, 2rem);
+        }
+
+        .title-block p {
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .control-row {
+            display: grid;
+            grid-template-columns: minmax(280px, 420px) auto;
+            gap: 16px;
+            align-items: end;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .field label {
+            font-weight: 800;
+            color: #2b3446;
+        }
+
+        .field select {
+            width: 100%;
+            min-height: 56px;
+            border: 1px solid rgba(24, 34, 53, 0.14);
+            border-radius: 16px;
+            padding: 0 16px;
+            background: #fff;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .btn-primary {
+            min-height: 56px;
+            padding: 0 22px;
+            border-radius: 16px;
+            border: none;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            box-shadow: 0 14px 28px rgba(63, 85, 207, 0.24);
+            cursor: pointer;
+            font-weight: 800;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .report-panel {
+            padding: 24px;
+            min-height: 700px;
+            display: grid;
+            grid-template-rows: auto auto minmax(0, 1fr);
+            gap: 16px;
+        }
+
+        .report-head {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .report-head h3 {
+            font-size: 1.42rem;
+        }
+
+        .report-head p {
+            margin-top: 4px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .report-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 10px 14px;
+            background: rgba(91, 110, 225, 0.1);
+            color: var(--accent-deep);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .report-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+
+        .report-viewer {
+            min-height: 0;
+            overflow: auto;
+            padding: 22px;
+            border-radius: 20px;
+            background: #fff;
+            border: 1px solid rgba(24, 34, 53, 0.1);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .report-viewer pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: "Manrope", "Noto Sans SC", sans-serif;
+            font-size: 0.97rem;
+            line-height: 1.82;
+            color: #243246;
+        }
+
+        .status-line {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            width: fit-content;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(79, 174, 120, 0.12);
+            color: #2b7f54;
+            font-weight: 800;
+        }
+
+        @media (max-width: 1100px) {
+            .hero-row,
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page-shell {
+                padding: 20px 14px 34px;
+            }
+
+            .module-panel {
+                padding: 22px;
+                border-radius: 26px;
+            }
+
+            .control-row {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar,
+            .report-head,
+            .report-meta,
+            .section-title {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <div class="topbar">
+            <a class="back-link" href="sippulse-service-home.html">
+                <i class="fas fa-arrow-left"></i>
+                Back To Home
+            </a>
+            <div class="module-pill">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                Step 04 · AI-Generated Solutions
+            </div>
+        </div>
+
+        <main class="module-panel">
+            <section class="hero-row">
+                <div class="hero-copy">
+                    <div class="eyebrow">
+                        <i class="fas fa-file-waveform"></i>
+                        AI-Generated Reports
+                    </div>
+                    <h1>AI-Generated Solutions</h1>
+                    <p>Review the recurring problem diagnosis and the broader summary report in one workspace. Switch between the latest month report and the full-time report, then refresh both panels together.</p>
+                </div>
+                <div class="summary-note">
+                    <strong>Report Scope</strong>
+                    <p>The left panel focuses on recurring problems and improvement suggestions with emphasis on negative signals. The right panel presents the broader Summary Report for the same time range.</p>
+                </div>
+            </section>
+
+            <section class="control-panel">
+                <div class="section-title">
+                    <div class="title-block">
+                        <h2>Screening Conditions</h2>
+                        <p>Select the report time range and load both AI-generated outputs together.</p>
+                    </div>
+                    <div class="status-line" id="statusLine">
+                        <i class="fas fa-circle-check"></i>
+                        Ready
+                    </div>
+                </div>
+                <div class="control-row">
+                    <div class="field">
+                        <label for="reportRange">Report type</label>
+                        <select id="reportRange">
+                            <option value="month">Month report</option>
+                            <option value="full">Full time report</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" id="generateBtn">
+                        <i class="fas fa-bolt"></i>
+                        Generate Reports
+                    </button>
+                </div>
+            </section>
+
+            <section class="report-grid">
+                <article class="report-panel">
+                    <div class="report-head">
+                        <div>
+                            <h3>Recurring Problems and Improvement Suggestions</h3>
+                            <p>Negative-message focused diagnosis with recurring issues and improvement actions.</p>
+                        </div>
+                        <div class="report-badge" id="leftBadge">
+                            <i class="fas fa-triangle-exclamation"></i>
+                            Month report
+                        </div>
+                    </div>
+                    <div class="report-meta">
+                        <span id="leftFile">summary_reports/recurring_problems_monthly_2026-05.md</span>
+                    </div>
+                    <div class="report-viewer">
+                        <pre id="leftReport"></pre>
+                    </div>
+                </article>
+
+                <article class="report-panel">
+                    <div class="report-head">
+                        <div>
+                            <h3>Summary Report</h3>
+                            <p>Overall sentiment, source distribution, model comparison, and future trend reading.</p>
+                        </div>
+                        <div class="report-badge" id="rightBadge">
+                            <i class="fas fa-chart-line"></i>
+                            Month report
+                        </div>
+                    </div>
+                    <div class="report-meta">
+                        <span id="rightFile">summary_reports/summary_report_monthly_2026-05.md</span>
+                    </div>
+                    <div class="report-viewer">
+                        <pre id="rightReport"></pre>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const reports = {
+            month: {
+                leftFile: "summary_reports/recurring_problems_monthly_2026-05.md",
+                rightFile: "summary_reports/summary_report_monthly_2026-05.md",
+                leftText: `# Recurring Problems and Improvement Suggestions
+
+**Recurring Problems and Improvement Suggestions**
+
+根据2026年5月的舆情数据，企业近期负面消息占比为2.41%，较上月略有上升。尽管整体情绪仍以正面为主（79.52%），但负面情绪在最近一个月内呈现出明显的波动趋势，特别是在情感细分类中，“Angry”（愤怒）和“Aversive”（厌恶）的情绪数量分别为1181条和518条，占总情绪样本的23.6%和10.3%。此外，“Sad”（悲伤）和“Concern”（担忧）的情绪也分别达到235条和123条，表明用户对某些问题存在持续性不满与焦虑。
+
+从风险监控角度看，负面信息主要集中在微博（1254条）和抖音（1238条），这两个平台合计占总数据量的54.8%。相比之下，小红书（Rednote）和大众点评（Dianping）的负面信息相对较少，分别为822条和1097条，分别占总数据量的16.4%和21.9%。这说明微博和抖音是当前负面舆情的主要来源，需重点关注。
+
+反复出现的问题类型主要包括产品服务质量、售后服务响应速度以及价格透明度。其中，关于产品质量的投诉占比达31.2%，涉及产品缺陷、功能不稳定等问题；售后服务方面，用户反馈处理效率低、沟通不畅的问题占28.7%；价格相关争议则占19.3%，主要集中在促销活动中的信息误导和定价不合理现象。
+
+从成因分析来看，这些问题可能与近期产品更新频繁、客服系统未及时优化、营销策略调整导致的信息不对称有关。此外，部分用户对新功能的适应性较差，也加剧了负面情绪的积累。
+
+跨平台表现差异显著。微博上的负面信息多集中于产品功能和用户体验，而抖音的负面内容更多围绕售后服务和价格问题。大众点评的负面评论则主要集中在服务态度和性价比方面。小红书的负面信息相对较少，但其情绪细分类中“Angry”和“Aversive”的比例较高，表明用户在该平台上的情绪较为激烈。
+
+未来几个月的负面走势预测显示，不同模型之间存在一定分歧。基于RNN模型的预测，到2026年9月，负面情绪占比预计为7.57%，而LSTM模型预测为8.12%，GradientBoosting模型则预测为3.81%。由于各模型的训练数据和算法逻辑存在差异，因此对未来的预测结果并不完全一致。保守判断下，负面情绪占比可能维持在5%至8%之间，需警惕潜在的舆情风险。
+
+针对上述问题，建议采取以下改进措施：首先，加强产品质量控制和用户反馈机制，确保产品稳定性；其次，优化售后服务流程，提升响应速度和沟通效率；最后，增强营销信息的透明度，避免因信息误导引发用户不满。同时，应加强对微博和抖音等高风险平台的监测力度，及时发现并应对负面舆情，防止事态扩大。`,
+                rightText: `# Summary Report
+
+Summary Report: 2026年5月企业舆情与情感风险分析月报
+
+根据2026年5月的舆情数据及预测模型分析结果，本月整体情感表现呈现积极态势，但需关注潜在风险变化。从最新情感趋势来看，2026年5月的舆情中，正面情绪占比为79.52%，中性情绪占比18.07%，负面情绪占比2.41%，较上月略有上升，主要体现在负面情绪比例增加0.3个百分点。同时，日度情感趋势显示，2026年5月12日的舆情中，正面情绪占比63.64%，中性情绪占比27.27%，负面情绪占比9.09%，表明近期舆情波动有所加剧。
+
+在风险监测方面，数据来源分布显示，微博（Weibo）和抖音（Douyin）仍是主要信息来源，分别占1254条和1238条，而小红书（Rednote）和大众点评（Dianping）分别贡献822条和1097条。情感细分数据显示，快乐（Happy）情绪最多，占比28.04%，其次为愤怒（Angry）情绪，占比26.23%，平静（Plain）情绪占比21.73%，厌恶（Aversive）情绪占比11.53%，悲伤（Sad）情绪占比5.25%，惊讶（Surprise）情绪占比2.74%。这表明当前舆情以积极情绪为主，但愤怒情绪仍需警惕。
+
+在四个预测模型对比中，RNN模型表现最佳，其准确率为96.59%，F1值为0.9495，优于其他模型。LSTM模型准确率为95.65%，F1值为0.9365；GradientBoosting模型准确率为94.83%，F1值为0.9225；ANOVA模型准确率为93.43%，F1值为0.9015。从未来预测结果看，各模型对2026年9月的情感预测存在差异：RNN模型预测正面情绪占比68.58%，中性情绪28.82%，负面情绪7.57%；LSTM模型预测正面情绪65.07%，中性情绪20.74%，负面情绪8.12%；GradientBoosting模型预测正面情绪70.14%，中性情绪26.97%，负面情绪3.81%；ANOVA模型预测正面情绪72.67%，中性情绪22.46%，负面情绪4.86%。其中，RNN与GradientBoosting模型在负面情绪预测上存在显著差异，分别为7.57%和3.81%。这一差异可能源于不同模型对历史数据的拟合方式不同，建议结合多模型结果进行综合判断。
+
+基于上述分析，未来走势判断显示，各模型均预测正面情绪将占据主导地位，但负面情绪比例存在波动风险。建议运营团队重点关注负面情绪的来源，尤其是愤怒情绪的集中爆发点，及时采取应对措施。同时，应加强社交媒体平台的数据监控，特别是微博和抖音的舆情动态，确保及时响应潜在风险。此外，可考虑引入更多元化的数据源，以提升情感分析的全面性和准确性。`
+            },
+            full: {
+                leftFile: "summary_reports/recurring_problems_all_time.md",
+                rightFile: "summary_reports/summary_report_all_time.md",
+                leftText: `# Recurring Problems and Improvement Suggestions
+
+**Recurring Problems and Improvement Suggestions**
+
+根据2022年7月至2026年5月期间的舆情数据，结合模型预测结果与情绪细分类分析，本报告围绕“Recurring Problems and Improvement Suggestions”展开全面分析。数据来源涵盖微博、抖音、小红书及大众点评四大平台，共计4411条记录，其中情绪细分类数据显示，“Angry”（愤怒）和“Aversive”（厌恶）是负面情绪的主要构成部分，分别占1181条和518条，占比分别为26.78%和11.75%。
+
+在长期反复出现的问题中，用户对产品服务质量的不满持续存在，尤其是在售后服务响应速度和问题解决效率方面。从情绪细分类来看，“Sad”（悲伤）和“Concern”（担忧）也表现出较高的频率，分别达到235条和198条，反映出用户对服务体验的失望和对未来改进的期待。此外，“Questioning”（质疑）情绪在数据中也有显著体现，共187条，表明用户对品牌透明度和沟通机制存在疑虑。
+
+从负面问题的严重程度排序来看，愤怒情绪（Angry）为最高，其次是厌恶（Aversive）、担忧（Concern）和悲伤（Sad）。情绪趋势显示，尽管整体负面情绪比例在2026年5月已降至2.41%，但其分布仍集中在特定领域，如物流延迟、客服反馈不及时等。值得注意的是，数据源差异明显，微博和抖音的负面情绪记录数量较高，分别为1254条和1238条，而小红书和大众点评则相对较低，分别为822条和1097条。
+
+从趋势变化来看，2026年5月的负面情绪比例较前一阶段有所下降，但未来预测显示，到2026年9月，负面情绪比例可能回升至3.81%至8.12%之间，具体取决于所采用的预测模型。其中，RNN模型预测的负面情绪比例最低，为7.57%，而LSTM模型则预测为8.12%。这表明，虽然当前负面情绪有所缓解，但潜在风险仍然存在。
+
+基于以上分析，预测到2026年9月，企业需重点关注售后服务质量、客户沟通机制以及产品交付效率，以降低负面情绪比例并提升用户满意度。建议优先改进以下方面：
+
+1. **优化售后服务流程**：针对用户反馈中频繁提及的售后响应慢、问题解决率低等问题，建立更高效的客服系统，提高处理时效性，减少用户焦虑感。
+2. **加强客户沟通渠道**：通过多平台互动增强用户信任，特别是针对“Questioning”情绪较高的情况，应增加透明度和信息更新频率。
+3. **提升物流与交付效率**：鉴于物流延迟是引发负面情绪的重要因素之一，需优化供应链管理，确保产品按时送达，减少用户不满。
+
+综上所述，企业需在现有基础上进一步强化服务质量和用户体验，以应对未来可能出现的负面情绪上升趋势，并提升品牌声誉与市场竞争力。`,
+                rightText: `# Summary Report
+
+Summary Report  
+截至2026年4月26日，基于2022年7月至2026年5月12日的结构化数据，企业舆情与情感风险分析显示整体情绪格局呈现积极态势，但存在阶段性波动。从情感比例来看，当前最新月份（2026年5月）的正面情绪占比为79.52%，中性情绪为18.07%，负面情绪为2.41%。这一数据表明，尽管整体情绪偏积极，但负面情绪仍需关注，尤其是在近期出现小幅上升趋势。  
+
+在时间维度上，情感趋势呈现出明显的阶段性波动。例如，在2023年中期至2024年初，负面情绪占比曾达到峰值，约为5.8%；而在2025年中后期，负面情绪下降至约2.5%。这种波动可能与市场事件、政策调整或品牌活动相关。此外，未来预测数据显示，到2026年9月，不同模型对情感分布的预测结果存在差异，其中RNN模型预测正面情绪为68.58%，中性情绪为28.82%，负面情绪为7.57%；而GradientBoosting模型则预测正面情绪为70.14%，中性情绪为26.97%，负面情绪为3.81%。这反映出模型之间在预测终点的情感分布上存在一定分歧，但总体趋势趋于一致，即正面情绪占主导地位。  
+
+从数据源贡献来看，微博（Weibo）和抖音（Douyin）是主要的数据来源，分别贡献了1254条和1238条记录，合计占比超过58%。其他平台如小红书（Rednote）和大众点评（Dianping）也提供了重要数据支持，分别为822条和1097条。这些数据源的分布反映了用户在不同平台上的活跃度及信息传播特点。  
+
+在风险特征方面，负面情绪主要集中在“愤怒”（Angry）和“悲伤”（Sad）两类情感，分别占总情感样本的26.76%和5.33%。这提示企业在应对舆情时应重点关注与愤怒情绪相关的事件，以减少潜在的声誉风险。  
+
+模型预测的一致性方面，RNN模型在准确性、F1分数和精确度上表现最佳，其准确率为96.59%，F1分数为0.9495，精确度为0.9385。相比之下，ANOVA模型的准确率为93.43%，虽然低于RNN，但在预测终点的负面情绪占比上最低，仅为4.86%。这表明不同模型在预测终点的情感分布上存在一定分歧，但整体趋势一致。  
+
+未来到预测终点（2026年9月），各模型预测的正面情绪占比均高于当前水平，且负面情绪占比普遍低于当前值。这表明，随着数据积累和模型优化，情感风险有望进一步降低。  
+
+针对上述分析，建议管理层采取以下行动：  
+1. 加强对微博和抖音等高活跃度平台的舆情监控，特别是涉及愤怒情绪的内容，及时响应并干预潜在风险。  
+2. 优化负面情绪处理机制，建立快速反应流程，以应对突发舆情事件，防止负面情绪扩散。  
+3. 持续评估不同模型的预测效果，结合多模型预测结果，提高情感风险预测的准确性和可靠性。  
+4. 增加对小红书和大众点评等平台的数据采集力度，以获取更全面的用户反馈信息，提升舆情分析的覆盖范围。  
+5. 定期开展情感风险评估报告，结合历史数据与预测结果，制定长期舆情管理策略，确保品牌形象稳定发展。`
+            }
+        };
+
+        const rangeSelect = document.getElementById("reportRange");
+        const generateBtn = document.getElementById("generateBtn");
+        const statusLine = document.getElementById("statusLine");
+        const leftReport = document.getElementById("leftReport");
+        const rightReport = document.getElementById("rightReport");
+        const leftFile = document.getElementById("leftFile");
+        const rightFile = document.getElementById("rightFile");
+        const leftBadge = document.getElementById("leftBadge");
+        const rightBadge = document.getElementById("rightBadge");
+
+        function labelForRange(range) {
+            return range === "month" ? "Month report" : "Full time report";
+        }
+
+        function renderReports(range) {
+            const config = reports[range];
+            leftReport.textContent = config.leftText;
+            rightReport.textContent = config.rightText;
+            leftFile.textContent = config.leftFile;
+            rightFile.textContent = config.rightFile;
+            leftBadge.innerHTML = `<i class="fas fa-triangle-exclamation"></i> ${labelForRange(range)}`;
+            rightBadge.innerHTML = `<i class="fas fa-chart-line"></i> ${labelForRange(range)}`;
+            statusLine.innerHTML = `<i class="fas fa-circle-check"></i> Loaded ${labelForRange(range)}`;
+        }
+
+        generateBtn.addEventListener("click", () => {
+            statusLine.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Generating`;
+            window.setTimeout(() => {
+                renderReports(rangeSelect.value);
+            }, 450);
+        });
+
+        renderReports("month");
+    </script>
+</body>
+</html>

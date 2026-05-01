@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipPulse Account Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #10223a;
+            --bg-mid: #1b3a57;
+            --panel: rgba(255, 255, 255, 0.96);
+            --panel-soft: #f6f8fc;
+            --text-main: #162132;
+            --text-muted: #66758c;
+            --line: rgba(22, 33, 50, 0.12);
+            --accent: #ff7a59;
+            --accent-deep: #ea5d3d;
+            --accent-soft: rgba(255, 122, 89, 0.12);
+            --shadow: 0 28px 60px rgba(8, 16, 29, 0.24);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Manrope", "Noto Sans SC", sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.16), transparent 24%),
+                radial-gradient(circle at 84% 16%, rgba(255, 122, 89, 0.24), transparent 22%),
+                linear-gradient(145deg, var(--bg-deep) 0%, var(--bg-mid) 60%, #2d5872 100%);
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .page-shell {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 30px 20px 44px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .back-link,
+        .module-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 999px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            font-size: 0.95rem;
+        }
+
+        .module-pill {
+            background: linear-gradient(135deg, rgba(255, 122, 89, 0.34), rgba(255, 255, 255, 0.12));
+        }
+
+        .module-panel {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 34px;
+            box-shadow: var(--shadow);
+            padding: 34px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Space Grotesk", "Noto Sans SC", sans-serif;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .content-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2.1rem, 4vw, 3.1rem);
+            line-height: 1.04;
+            margin-bottom: 14px;
+        }
+
+        .hero-copy {
+            margin-bottom: 24px;
+        }
+
+        .hero-copy p {
+            color: var(--text-muted);
+            max-width: 720px;
+            font-size: 1rem;
+            margin-bottom: 22px;
+        }
+
+        .form-card {
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            background: linear-gradient(180deg, #ffffff, #f7f9fc);
+            box-shadow: 0 18px 38px rgba(20, 30, 45, 0.08);
+        }
+
+        .form-card {
+            padding: 28px;
+            flex: 1;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .section-head p,
+        .status-copy,
+        .summary-card p,
+        .summary-card li {
+            color: var(--text-muted);
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 10px 14px;
+            background: rgba(79, 174, 120, 0.12);
+            color: #2f7a50;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .field-full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            font-weight: 800;
+            color: #2b3446;
+        }
+
+        .field input {
+            width: 100%;
+            min-height: 56px;
+            border-radius: 16px;
+            border: 1px solid rgba(22, 33, 50, 0.14);
+            padding: 0 16px;
+            background: #fff;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 18px;
+            color: var(--text-muted);
+            font-size: 0.94rem;
+        }
+
+        .toggle-row input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 22px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            min-height: 54px;
+            padding: 0 20px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            font-weight: 800;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            box-shadow: 0 14px 28px rgba(234, 93, 61, 0.24);
+        }
+
+        .btn-secondary {
+            color: var(--text-main);
+            background: #eef2f8;
+            border: 1px solid rgba(22, 33, 50, 0.08);
+        }
+
+        .btn-primary:hover,
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+        }
+
+        .feedback {
+            min-height: 24px;
+            margin-top: 16px;
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: #2f7a50;
+        }
+
+        .hero-side {
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+            min-height: 640px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: var(--shadow);
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 640px;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.45s ease;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .carousel-slide::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(16, 31, 45, 0.08) 0%, rgba(16, 31, 45, 0.2) 40%, rgba(16, 31, 45, 0.78) 100%);
+        }
+
+        .carousel-copy {
+            position: absolute;
+            left: 24px;
+            right: 24px;
+            bottom: 82px;
+            z-index: 1;
+            color: #fff;
+        }
+
+        .carousel-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(10px);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .carousel-controls {
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-dots {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.42);
+            transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        .carousel-dot:hover {
+            transform: translateY(-2px);
+        }
+
+        .carousel-dot.active {
+            width: 28px;
+            background: #fff;
+        }
+
+        @media (max-width: 860px) {
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .content-grid,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-panel {
+                padding: 24px;
+            }
+
+            .section-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <div class="topbar">
+            <a class="back-link" href="sippulse-service-home.html">
+                <i class="fas fa-arrow-left"></i>
+                Back To Home
+            </a>
+            <div class="module-pill">
+                <i class="fas fa-user-shield"></i>
+                Account Access
+            </div>
+        </div>
+
+        <main class="module-panel">
+            <section class="content-grid">
+                <div class="content-main">
+                    <div class="hero-copy">
+                        <div class="eyebrow">
+                            <i class="fas fa-fingerprint"></i>
+                            Personal Account Sign-In
+                        </div>
+                        <h1>Log into your SipPulse workspace.</h1>
+                    </div>
+
+                    <section class="form-card">
+                        <div class="section-head">
+                            <div>
+                                <h2>Account Credentials</h2>
+                                <p>Enter your user details to simulate sign-in.</p>
+                            </div>
+                            <div class="status-chip" id="accountStatusChip">
+                                <i class="fas fa-circle-user"></i>
+                                Not signed in
+                            </div>
+                        </div>
+
+                        <form id="accountForm">
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label for="accountName">Full name</label>
+                                    <input id="accountName" type="text" placeholder="Alex Morgan">
+                                </div>
+                                <div class="field">
+                                    <label for="companyName">Company</label>
+                                    <input id="companyName" type="text" placeholder="SipPulse Beverage Team">
+                                </div>
+                                <div class="field field-full">
+                                    <label for="accountEmail">Work email</label>
+                                    <input id="accountEmail" type="email" placeholder="alex@sippulse.com" required>
+                                </div>
+                                <div class="field field-full">
+                                    <label for="accountPassword">Password</label>
+                                    <input id="accountPassword" type="password" placeholder="Enter your password" required>
+                                </div>
+                            </div>
+
+                            <label class="toggle-row" for="rememberBrowser">
+                                <input id="rememberBrowser" type="checkbox" checked>
+                                Remember this browser for the prototype
+                            </label>
+
+                            <div class="action-row">
+                                <button class="btn-primary" type="submit">
+                                    <i class="fas fa-right-to-bracket"></i>
+                                    Sign In
+                                </button>
+                                <button class="btn-secondary" id="clearAccountBtn" type="button">
+                                    <i class="fas fa-arrow-rotate-left"></i>
+                                    Clear Saved Account
+                                </button>
+                            </div>
+
+                            <div class="feedback" id="feedbackMessage" aria-live="polite"></div>
+                        </form>
+                    </section>
+                </div>
+
+                <aside class="hero-side">
+                    <div class="carousel" id="brand-carousel">
+                        <div class="carousel-slide active" style="background-image: url('https://33030827.s21i.faiusr.com/4/ABUIABAEGAAgzpSlyQYo0LK_7wMwrgg42Aw!1000x1000.png');">
+                            <div class="carousel-copy">
+                                <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                            </div>
+                        </div>
+                        <div class="carousel-slide" style="background-image: url('https://www.javapresse.com/cdn/shop/articles/JavaPresse_166.webp?v=1715088531&width=780');">
+                            <div class="carousel-copy">
+                                <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                            </div>
+                        </div>
+                        <div class="carousel-slide" style="background-image: url('https://www.naixue.com/assets/join-us-B0U_hEKv.png');">
+                            <div class="carousel-copy">
+                                <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                            </div>
+                        </div>
+                        <div class="carousel-slide" style="background-image: url('https://daoinsights.com/wp-content/uploads/2025/02/goodme-2-768x1024.jpg'); background-position: center 42%;">
+                            <div class="carousel-copy">
+                                <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                            </div>
+                        </div>
+                        <div class="carousel-slide" style="background-image: url('https://pic.rmb.bdstatic.com/bjh/3ea18ff0b318/240911/2a63d08a678cba1e02197ff2a47b81e5.jpeg?x-bce-process=image/watermark,bucket_baidu-rmb-video-cover-1,image_YmpoL25ld3MvNjUzZjZkMjRlMDJiNjdjZWU1NzEzODg0MDNhYTQ0YzQucG5n,type_RlpMYW5UaW5nSGVpU01HQg==,w_31,text_QOeUu-aYjua3oeeahOi-uTFD,size_31,x_24,y_24,interval_2,color_FFFFFF,effect_softoutline,shc_000000,blr_2,align_1'); background-position: center 32%;">
+                            <div class="carousel-copy">
+                                <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                            </div>
+                        </div>
+                        <div class="carousel-slide" style="background-image: url('https://prod-oss.chagee.com.hk/web/uploads/20240829/255d8bfc-9508-4a40-b189-e2cdf7fa7fa8.jpg'); background-position: center 26%;">
+                            <div class="carousel-copy">
+                                <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                            </div>
+                        </div>
+                        <div class="carousel-controls">
+                            <div class="carousel-dots" aria-label="Slide navigation">
+                                <button class="carousel-dot active" type="button" data-slide="0" aria-label="Show slide 1"></button>
+                                <button class="carousel-dot" type="button" data-slide="1" aria-label="Show slide 2"></button>
+                                <button class="carousel-dot" type="button" data-slide="2" aria-label="Show slide 3"></button>
+                                <button class="carousel-dot" type="button" data-slide="3" aria-label="Show slide 4"></button>
+                                <button class="carousel-dot" type="button" data-slide="4" aria-label="Show slide 5"></button>
+                                <button class="carousel-dot" type="button" data-slide="5" aria-label="Show slide 6"></button>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        (function () {
+            const carousel = document.getElementById("brand-carousel");
+            const accountForm = document.getElementById("accountForm");
+            const clearAccountBtn = document.getElementById("clearAccountBtn");
+            const accountNameInput = document.getElementById("accountName");
+            const companyNameInput = document.getElementById("companyName");
+            const accountEmailInput = document.getElementById("accountEmail");
+            const accountPasswordInput = document.getElementById("accountPassword");
+            const rememberBrowserInput = document.getElementById("rememberBrowser");
+            const feedbackMessage = document.getElementById("feedbackMessage");
+            const accountStatusChip = document.getElementById("accountStatusChip");
+
+            function readAccountState() {
+                try {
+                    return {
+                        name: window.localStorage.getItem("sippulseAccountName") || "",
+                        company: window.localStorage.getItem("sippulseCompanyName") || "",
+                        email: window.localStorage.getItem("sippulseAccountEmail") || "",
+                        remember: window.localStorage.getItem("sippulseRememberBrowser") !== "false"
+                    };
+                } catch (error) {
+                    return {
+                        name: "",
+                        company: "",
+                        email: "",
+                        remember: true
+                    };
+                }
+            }
+
+            function renderAccountState() {
+                const account = readAccountState();
+
+                accountNameInput.value = account.name;
+                companyNameInput.value = account.company;
+                accountEmailInput.value = account.email;
+                accountPasswordInput.value = "";
+                rememberBrowserInput.checked = account.remember;
+
+                if (account.email) {
+                    accountStatusChip.innerHTML = '<i class="fas fa-circle-check"></i> Signed in';
+                    return;
+                }
+
+                accountStatusChip.innerHTML = '<i class="fas fa-circle-user"></i> Not signed in';
+            }
+
+            function saveAccountState(event) {
+                event.preventDefault();
+
+                const accountName = accountNameInput.value.trim();
+                const companyName = companyNameInput.value.trim();
+                const accountEmail = accountEmailInput.value.trim();
+                const accountPassword = accountPasswordInput.value;
+
+                if (!accountEmail || !accountPassword) {
+                    feedbackMessage.textContent = "Enter both email and password to continue.";
+                    return;
+                }
+
+                try {
+                    window.localStorage.setItem("sippulseAccountName", accountName);
+                    window.localStorage.setItem("sippulseCompanyName", companyName);
+                    window.localStorage.setItem("sippulseAccountEmail", accountEmail);
+                    window.localStorage.setItem("sippulseRememberBrowser", String(rememberBrowserInput.checked));
+                    feedbackMessage.textContent = "Account saved for this prototype. The home page entry is now updated.";
+                    renderAccountState();
+                } catch (error) {
+                    feedbackMessage.textContent = "Unable to save account state in this browser.";
+                }
+            }
+
+            function clearAccountState() {
+                try {
+                    window.localStorage.removeItem("sippulseAccountName");
+                    window.localStorage.removeItem("sippulseCompanyName");
+                    window.localStorage.removeItem("sippulseAccountEmail");
+                    window.localStorage.removeItem("sippulseRememberBrowser");
+                    accountForm.reset();
+                    rememberBrowserInput.checked = true;
+                    feedbackMessage.textContent = "Saved account cleared.";
+                    renderAccountState();
+                } catch (error) {
+                    feedbackMessage.textContent = "Unable to clear account state in this browser.";
+                }
+            }
+
+            accountForm.addEventListener("submit", saveAccountState);
+            clearAccountBtn.addEventListener("click", clearAccountState);
+            renderAccountState();
+
+            if (!carousel) return;
+
+            const slides = Array.from(carousel.querySelectorAll(".carousel-slide"));
+            const dots = Array.from(carousel.querySelectorAll(".carousel-dot"));
+            let currentIndex = 0;
+            let autoplayId = null;
+
+            function showSlide(index) {
+                currentIndex = (index + slides.length) % slides.length;
+                slides.forEach(function (slide, slideIndex) {
+                    slide.classList.toggle("active", slideIndex === currentIndex);
+                });
+                dots.forEach(function (dot, dotIndex) {
+                    dot.classList.toggle("active", dotIndex === currentIndex);
+                });
+            }
+
+            function nextSlide() {
+                showSlide(currentIndex + 1);
+            }
+
+            function startAutoplay() {
+                stopAutoplay();
+                autoplayId = window.setInterval(nextSlide, 4000);
+            }
+
+            function stopAutoplay() {
+                if (autoplayId !== null) {
+                    window.clearInterval(autoplayId);
+                    autoplayId = null;
+                }
+            }
+
+            dots.forEach(function (dot) {
+                dot.addEventListener("click", function () {
+                    showSlide(Number(dot.dataset.slide));
+                    startAutoplay();
+                });
+            });
+
+            carousel.addEventListener("mouseenter", stopAutoplay);
+            carousel.addEventListener("mouseleave", startAutoplay);
+
+            startAutoplay();
+        }());
+    </script>
+</body>
+</html>

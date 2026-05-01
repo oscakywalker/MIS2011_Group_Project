@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipPulse Dianping Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-ink: #152238;
+            --bg-deep: #0d1626;
+            --bg-glow: #ff7e26;
+            --panel: rgba(255, 255, 255, 0.94);
+            --panel-soft: rgba(255, 255, 255, 0.72);
+            --text-main: #182235;
+            --text-muted: #6c7790;
+            --line: rgba(24, 34, 53, 0.12);
+            --positive: #18925d;
+            --neutral: #9c7b2b;
+            --negative: #cf5b20;
+            --shadow: 0 28px 60px rgba(8, 16, 29, 0.22);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Manrope", "Noto Sans SC", sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(255, 126, 38, 0.22), transparent 24%),
+                radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.08), transparent 18%),
+                linear-gradient(140deg, var(--bg-deep) 0%, var(--bg-ink) 55%, #243a59 100%);
+        }
+
+        .page-shell {
+            max-width: 1380px;
+            margin: 0 auto;
+            padding: 30px 20px 42px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .back-link,
+        .source-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 999px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            font-size: 0.95rem;
+        }
+
+        .source-pill {
+            background: linear-gradient(135deg, rgba(255, 126, 38, 0.25), rgba(255, 191, 87, 0.18));
+        }
+
+        .module-panel {
+            position: relative;
+            overflow: hidden;
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 34px;
+            box-shadow: var(--shadow);
+            padding: 34px;
+        }
+
+        .module-panel::before {
+            content: "";
+            position: absolute;
+            inset: auto -60px -80px auto;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 126, 38, 0.18), transparent 68%);
+            pointer-events: none;
+        }
+
+        .hero-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+            gap: 24px;
+            align-items: start;
+            margin-bottom: 28px;
+        }
+
+        .hero-copy {
+            position: relative;
+            z-index: 1;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: rgba(255, 126, 38, 0.1);
+            color: #b85a00;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: "Space Grotesk", sans-serif;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2.2rem, 4vw, 3.8rem);
+            line-height: 1.02;
+            margin-bottom: 14px;
+        }
+
+        .hero-copy p {
+            max-width: 760px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .brand-summary {
+            display: grid;
+            gap: 14px;
+        }
+
+        .brand-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            width: fit-content;
+            padding: 12px 18px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid var(--line);
+            box-shadow: 0 16px 30px rgba(22, 32, 49, 0.08);
+            font-weight: 700;
+        }
+
+        .brand-chip img {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .summary-note {
+            background: linear-gradient(135deg, #1d2940, #314868);
+            color: #f5f7fb;
+            border-radius: 24px;
+            padding: 22px;
+            min-height: 132px;
+        }
+
+        .summary-note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .summary-note p {
+            color: rgba(245, 247, 251, 0.78);
+            font-size: 0.95rem;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .metric-card {
+            background: linear-gradient(180deg, #ffffff, #f6f8fc);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            padding: 24px;
+            min-height: 168px;
+            box-shadow: 0 18px 38px rgba(20, 30, 45, 0.08);
+        }
+
+        .metric-card .mini-line {
+            width: 68px;
+            height: 3px;
+            border-radius: 999px;
+            background: rgba(24, 34, 53, 0.18);
+            margin-bottom: 26px;
+        }
+
+        .metric-card strong {
+            display: block;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(1.9rem, 3vw, 2.6rem);
+            margin-bottom: 6px;
+        }
+
+        .metric-card span {
+            display: block;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .metric-card p {
+            color: var(--text-muted);
+            font-size: 0.94rem;
+        }
+
+        .sentiment-rail {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 18px 0 26px;
+        }
+
+        .sentiment-rail::before {
+            content: "";
+            height: 6px;
+            flex: 1;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--positive), var(--neutral), var(--negative));
+            box-shadow: inset 0 0 0 1px rgba(24, 34, 53, 0.08);
+        }
+
+        .rail-node {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            border: 4px solid #1a2335;
+            box-shadow: 0 8px 16px rgba(22, 32, 49, 0.16);
+            flex: 0 0 auto;
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .sentiment-card {
+            background: linear-gradient(180deg, #ffffff, #fbfcfe);
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 18px 34px rgba(20, 30, 45, 0.06);
+        }
+
+        .sentiment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .sentiment-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .sentiment-title i {
+            font-size: 0.88rem;
+        }
+
+        .download-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .download-icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(20, 30, 45, 0.12);
+        }
+
+        .sentiment-card.positive .sentiment-title {
+            background: rgba(24, 146, 93, 0.12);
+            color: var(--positive);
+        }
+
+        .sentiment-card.neutral .sentiment-title {
+            background: rgba(156, 123, 43, 0.12);
+            color: var(--neutral);
+        }
+
+        .sentiment-card.negative .sentiment-title {
+            background: rgba(215, 59, 99, 0.12);
+            color: var(--negative);
+        }
+
+        .comment-stack {
+            display: grid;
+            gap: 14px;
+            max-height: 620px;
+            overflow-y: auto;
+            padding-right: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(24, 34, 53, 0.28) transparent;
+        }
+
+        .comment-stack::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .comment-stack::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .comment-stack::-webkit-scrollbar-thumb {
+            background: rgba(24, 34, 53, 0.22);
+            border-radius: 999px;
+        }
+
+        .comment-item {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 88px;
+            gap: 14px;
+            padding: 16px 0;
+            border-top: 1px dashed rgba(24, 34, 53, 0.12);
+        }
+
+        .comment-item:first-child {
+            border-top: none;
+            padding-top: 6px;
+        }
+
+        .comment-text strong {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .comment-text p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .score-box {
+            border-left: 2px dashed rgba(24, 34, 53, 0.25);
+            padding-left: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .score-box span {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .score-box strong {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 1.6rem;
+            line-height: 1;
+            margin-top: 6px;
+        }
+
+        .sentiment-meta {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 800;
+            margin-left: 6px;
+        }
+
+        .comment-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.83rem;
+            font-weight: 700;
+        }
+
+        .comment-meta .meta-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(24, 34, 53, 0.3);
+        }
+
+        .empty-state,
+        .load-state {
+            border-radius: 22px;
+            border: 1px dashed rgba(24, 34, 53, 0.18);
+            padding: 20px;
+            color: var(--text-muted);
+            background: rgba(246, 248, 252, 0.8);
+            font-size: 0.94rem;
+            line-height: 1.6;
+        }
+
+        .footer-note {
+            margin-top: 26px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 1120px) {
+            .hero-row,
+            .metric-grid,
+            .insight-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page-shell {
+                padding: 18px 14px 28px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .module-panel {
+                padding: 22px;
+                border-radius: 24px;
+            }
+
+            .comment-item {
+                grid-template-columns: 1fr;
+            }
+
+            .score-box {
+                border-left: none;
+                border-top: 2px dashed rgba(24, 34, 53, 0.25);
+                padding-left: 0;
+                padding-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <div class="topbar">
+            <a class="back-link" href="sippulse-service-home.html">
+                <i class="fas fa-arrow-left"></i>
+                Back to Service Home
+            </a>
+            <div class="source-pill">
+                <i class="fas fa-book-open"></i>
+                Dianping Media Source Module
+            </div>
+        </div>
+
+        <main class="module-panel">
+            <section class="hero-row">
+                <div class="hero-copy">
+                    <div class="eyebrow">
+                        <i class="fas fa-signal"></i>
+                        Store-visit experience board
+                    </div>
+                    <h1>Dianping store-visit feedback, organized into clear sentiment lanes.</h1>
+                    <p>
+                        This module turns Dianping-style store-visit comments into a compact review surface for beverage brands. It highlights total analysis volume, service and environment feedback, supported language coverage, and representative comments scored by sentiment.
+                    </p>
+                </div>
+
+                <div class="brand-summary">
+                    <div class="brand-chip">
+                        <img src="assets/platform-icons/dianping.jpg" alt="dianping icon">
+                        <span id="brand-name">Brand: Nayuki</span>
+                    </div>
+                    <div class="summary-note">
+                        <strong>Current signal</strong>
+                        <p>
+                            Dianping feedback centers on store-visit experience: new product tasting, price value, service attitude, queue time, seating, environment, and repurchase intent.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="metric-grid">
+                <article class="metric-card">
+                    <div class="mini-line"></div>
+                    <strong id="analysis-total">--</strong>
+                    <span>Total amount of analysis</span>
+                    <p id="analysis-total-note">Comments parsed from the current Dianping JSONL source file.</p>
+                </article>
+                <article class="metric-card">
+                    <div class="mini-line"></div>
+                    <strong>0.6h</strong>
+                    <span>Average response time</span>
+                    <p>Estimated time from store exposure to visible comment reaction clustering around service, environment, price, and new-product trial experience.</p>
+                </article>
+                <article class="metric-card">
+                    <div class="mini-line"></div>
+                    <strong id="language-total">--</strong>
+                    <span>Supported languages</span>
+                    <p id="language-note">Chinese-friendly rendering with multilingual text and emoji-safe display.</p>
+                </article>
+            </section>
+
+            <div class="sentiment-rail" aria-hidden="true">
+                <span class="rail-node"></span>
+                <span class="rail-node"></span>
+            </div>
+
+            <section class="insight-grid">
+                <article class="sentiment-card positive">
+                    <div class="sentiment-header">
+                        <div class="sentiment-title">
+                            <i class="fas fa-face-smile"></i>
+                            Positive
+                            <span class="sentiment-meta" id="positive-count">0</span>
+                        </div>
+                        <button class="download-btn" type="button" aria-label="Download positive sentiment list">
+                            <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 4v9"></path>
+                                <path d="M8.5 10.5 12 14l3.5-3.5"></path>
+                                <path d="M5 16.5v1.5A1.5 1.5 0 0 0 6.5 19.5h11A1.5 1.5 0 0 0 19 18v-1.5"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="comment-stack" id="positive-list">
+                        <div class="load-state">Loading positive comments from the Dianping JSONL source...</div>
+                    </div>
+                </article>
+
+                <article class="sentiment-card neutral">
+                    <div class="sentiment-header">
+                        <div class="sentiment-title">
+                            <i class="fas fa-face-meh"></i>
+                            Neutral
+                            <span class="sentiment-meta" id="neutral-count">0</span>
+                        </div>
+                        <button class="download-btn" type="button" aria-label="Download neutral sentiment list">
+                            <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 4v9"></path>
+                                <path d="M8.5 10.5 12 14l3.5-3.5"></path>
+                                <path d="M5 16.5v1.5A1.5 1.5 0 0 0 6.5 19.5h11A1.5 1.5 0 0 0 19 18v-1.5"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="comment-stack" id="neutral-list">
+                        <div class="load-state">Loading neutral comments from the Dianping JSONL source...</div>
+                    </div>
+                </article>
+
+                <article class="sentiment-card negative">
+                    <div class="sentiment-header">
+                        <div class="sentiment-title">
+                            <i class="fas fa-face-frown"></i>
+                            Negative
+                            <span class="sentiment-meta" id="negative-count">0</span>
+                        </div>
+                        <button class="download-btn" type="button" aria-label="Download negative sentiment list">
+                            <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 4v9"></path>
+                                <path d="M8.5 10.5 12 14l3.5-3.5"></path>
+                                <path d="M5 16.5v1.5A1.5 1.5 0 0 0 6.5 19.5h11A1.5 1.5 0 0 0 19 18v-1.5"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="comment-stack" id="negative-list">
+                        <div class="load-state">Loading negative comments from the Dianping JSONL source...</div>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <div class="footer-note">
+            SipPulse Dianping prototype page. “Score” is sourced from attributes.sentiment.score in the analyzed Dianping JSONL file.
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const brandName = params.get("brand");
+            const brandLabel = document.getElementById("brand-name");
+
+            if (brandName && brandLabel) {
+                brandLabel.textContent = "Brand: " + brandName;
+            }
+
+            const filePath = "dianping/dianping_naixue_simulated_comments.jsonl";
+            const lists = {
+                positive: document.getElementById("positive-list"),
+                neutral: document.getElementById("neutral-list"),
+                negative: document.getElementById("negative-list")
+            };
+            const countEls = {
+                positive: document.getElementById("positive-count"),
+                neutral: document.getElementById("neutral-count"),
+                negative: document.getElementById("negative-count")
+            };
+            const analysisTotal = document.getElementById("analysis-total");
+            const analysisTotalNote = document.getElementById("analysis-total-note");
+            const languageTotal = document.getElementById("language-total");
+            const languageNote = document.getElementById("language-note");
+            const downloadButtons = Array.from(document.querySelectorAll(".download-btn"));
+
+            function escapeHtml(value) {
+                return String(value)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/\"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            }
+
+            function formatScore(value) {
+                const numeric = Number(value);
+                return Number.isFinite(numeric) ? numeric.toFixed(3) : "--";
+            }
+
+            function renderEmpty(listEl, message) {
+                listEl.innerHTML = '<div class="empty-state">' + escapeHtml(message) + "</div>";
+            }
+
+            function renderList(type, entries) {
+                const listEl = lists[type];
+                countEls[type].textContent = String(entries.length);
+
+                if (!entries.length) {
+                    renderEmpty(listEl, "No " + type + " comments were found in the current source file.");
+                    return;
+                }
+
+                const html = entries.map(function (entry) {
+                    const nickname = entry.nickname ? escapeHtml(entry.nickname) : "Anonymous";
+                    const ipLocation = entry.ip_location ? escapeHtml(entry.ip_location) : "Unknown";
+                    const text = entry.analyzed_text ? escapeHtml(entry.analyzed_text) : "No analyzed text";
+                    const score = formatScore(entry.score);
+
+                    return [
+                        '<div class="comment-item">',
+                            '<div class="comment-text">',
+                                '<div class="comment-meta">',
+                                    "<span>" + nickname + "</span>",
+                                    '<span class="meta-dot"></span>',
+                                    "<span>" + ipLocation + "</span>",
+                                    '<span class="meta-dot"></span>',
+                                    "<span>" + escapeHtml(type) + "</span>",
+                                "</div>",
+                                "<strong>Analyzed Text</strong>",
+                                "<p>" + text + "</p>",
+                            "</div>",
+                            '<div class="score-box">',
+                                "<span>Score</span>",
+                                "<strong>" + score + "</strong>",
+                            "</div>",
+                        "</div>"
+                    ].join("");
+                }).join("");
+
+                listEl.innerHTML = html;
+            }
+
+            function detectLanguages(entries) {
+                const detected = new Set();
+
+                entries.forEach(function (entry) {
+                    const text = entry.analyzed_text || "";
+                    if (/[\u4e00-\u9fff]/.test(text)) {
+                        detected.add("中文");
+                    }
+                    if (/[A-Za-z]/.test(text)) {
+                        detected.add("English");
+                    }
+                    if (/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/u.test(text)) {
+                        detected.add("Emoji");
+                    }
+                });
+
+                return detected;
+            }
+
+            function bindDownloads(groups) {
+                downloadButtons.forEach(function (button) {
+                    button.addEventListener("click", function () {
+                        const card = button.closest(".sentiment-card");
+                        if (!card) return;
+
+                        const type = card.classList.contains("positive")
+                            ? "positive"
+                            : card.classList.contains("neutral")
+                                ? "neutral"
+                                : "negative";
+
+                        const rows = groups[type] || [];
+                        const payload = rows.map(function (item) {
+                            return JSON.stringify({
+                                polarity: type,
+                                score: item.score,
+                                analyzed_text: item.analyzed_text,
+                                nickname: item.nickname,
+                                ip_location: item.ip_location
+                            });
+                        }).join("\n");
+
+                        const blob = new Blob([payload], { type: "application/x-ndjson;charset=utf-8" });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = "dianping-" + type + "-comments.jsonl";
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                        URL.revokeObjectURL(url);
+                    });
+                });
+            }
+
+            fetch(filePath)
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("HTTP " + response.status);
+                    }
+                    return response.text();
+                })
+                .then(function (rawText) {
+                    const rows = rawText
+                        .split(/\r?\n/)
+                        .map(function (line) { return line.trim(); })
+                        .filter(Boolean)
+                        .map(function (line) {
+                            try {
+                                const record = JSON.parse(line);
+                                const sentiment = record.attributes && record.attributes.sentiment ? record.attributes.sentiment : {};
+                                return {
+                                    nickname: record.nickname || "",
+                                    ip_location: record.ip_location || "",
+                                    analyzed_text: record.attributes && record.attributes.analyzed_text ? record.attributes.analyzed_text : "",
+                                    polarity: sentiment.polarity || "",
+                                    score: sentiment.score
+                                };
+                            } catch (error) {
+                                return null;
+                            }
+                        })
+                        .filter(function (item) {
+                            return item && item.analyzed_text && item.polarity && Object.prototype.hasOwnProperty.call(lists, item.polarity);
+                        });
+
+                    const groups = {
+                        positive: [],
+                        neutral: [],
+                        negative: []
+                    };
+
+                    rows.forEach(function (item) {
+                        groups[item.polarity].push(item);
+                    });
+
+                    Object.keys(groups).forEach(function (key) {
+                        groups[key].sort(function (a, b) {
+                            return Number(b.score || 0) - Number(a.score || 0);
+                        });
+                        renderList(key, groups[key]);
+                    });
+
+                    analysisTotal.textContent = rows.length.toLocaleString("en-US");
+                    analysisTotalNote.textContent = "Parsed " + rows.length.toLocaleString("en-US") + " comment records with sentiment labels from " + filePath + ".";
+
+                    const languages = Array.from(detectLanguages(rows));
+                    languageTotal.textContent = String(languages.length || 1);
+                    languageNote.textContent = languages.length
+                        ? "Detected content types: " + languages.join(" / ") + "."
+                        : "Chinese-friendly rendering enabled for the current source file.";
+
+                    bindDownloads(groups);
+                })
+                .catch(function () {
+                    Object.keys(lists).forEach(function (key) {
+                        renderEmpty(
+                            lists[key],
+                            "Unable to load dianping/dianping_naixue_simulated_comments.jsonl. Open this page through a local server instead of file:// if the browser blocks fetch."
+                        );
+                    });
+                    analysisTotal.textContent = "0";
+                    languageTotal.textContent = "1";
+                    languageNote.textContent = "Chinese layout support is ready, but the Dianping JSONL source could not be fetched in the current browser context.";
+                });
+        }());
+    </script>
+</body>
+</html>
