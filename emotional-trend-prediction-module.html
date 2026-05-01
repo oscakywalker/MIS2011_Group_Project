@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipPulse Emotional Trend Prediction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #0f1a2b;
+            --bg-ink: #1b2a42;
+            --panel: rgba(255, 255, 255, 0.96);
+            --panel-soft: #f6f8fc;
+            --text-main: #182235;
+            --text-muted: #68758c;
+            --line: rgba(24, 34, 53, 0.12);
+            --accent: #5b6ee1;
+            --accent-deep: #3f55cf;
+            --positive: #4fae78;
+            --neutral: #6e7581;
+            --negative: #e34d4d;
+            --shadow: 0 28px 60px rgba(8, 16, 29, 0.24);
+            --card-shadow: 0 18px 38px rgba(20, 30, 45, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Manrope", "Noto Sans SC", sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(91, 110, 225, 0.24), transparent 24%),
+                radial-gradient(circle at 86% 12%, rgba(79, 174, 120, 0.14), transparent 20%),
+                linear-gradient(140deg, var(--bg-deep) 0%, var(--bg-ink) 58%, #314760 100%);
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: "Space Grotesk", "Noto Sans SC", sans-serif;
+            letter-spacing: 0;
+        }
+
+        .page-shell {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 30px 20px 48px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .back-link,
+        .module-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 999px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            font-size: 0.95rem;
+        }
+
+        .module-pill {
+            background: linear-gradient(135deg, rgba(91, 110, 225, 0.34), rgba(79, 174, 120, 0.18));
+        }
+
+        .module-panel {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 34px;
+            box-shadow: var(--shadow);
+            padding: 34px;
+        }
+
+        .hero-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+            gap: 24px;
+            align-items: start;
+            margin-bottom: 30px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: rgba(91, 110, 225, 0.12);
+            color: var(--accent-deep);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2.2rem, 4vw, 3.6rem);
+            line-height: 1.04;
+            margin-bottom: 14px;
+        }
+
+        .hero-copy p {
+            max-width: 780px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .brand-summary {
+            display: grid;
+            gap: 14px;
+        }
+
+        .brand-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            width: fit-content;
+            padding: 12px 18px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid var(--line);
+            box-shadow: 0 16px 30px rgba(22, 32, 49, 0.08);
+            font-weight: 800;
+        }
+
+        .brand-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+        }
+
+        .summary-note {
+            background: linear-gradient(135deg, #1d2940, #334c70);
+            color: #f5f7fb;
+            border-radius: 24px;
+            padding: 22px;
+            min-height: 132px;
+        }
+
+        .summary-note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .summary-note p {
+            color: rgba(245, 247, 251, 0.78);
+            font-size: 0.95rem;
+        }
+
+        .workspace-shell {
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #ffffff, #f8faff);
+            border-radius: 30px;
+            box-shadow: var(--card-shadow);
+            padding: 28px;
+        }
+
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: minmax(340px, 0.96fr) minmax(0, 1fr);
+            gap: 28px;
+            align-items: stretch;
+        }
+
+        .left-stack,
+        .right-stack {
+            display: grid;
+            gap: 22px;
+        }
+
+        .config-card,
+        .progress-card,
+        .metrics-card,
+        .prediction-card {
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #ffffff, #f8faff);
+            border-radius: 30px;
+            box-shadow: var(--card-shadow);
+            padding: 24px 24px 22px;
+        }
+
+        .config-card h2,
+        .progress-card h2,
+        .metrics-card h2,
+        .prediction-card h2 {
+            font-size: clamp(1.4rem, 2vw, 1.95rem);
+            margin-bottom: 18px;
+        }
+
+        .control-group {
+            display: grid;
+            gap: 12px;
+        }
+
+        .control-group label,
+        .value-row strong,
+        .metrics-head strong {
+            font-weight: 800;
+            color: #2b3446;
+        }
+
+        .control-select,
+        .control-input {
+            width: 100%;
+            min-height: 60px;
+            border: 1px solid rgba(24, 34, 53, 0.14);
+            border-radius: 18px;
+            padding: 0 18px;
+            background: #fff;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .slider-block {
+            display: grid;
+            gap: 14px;
+        }
+
+        .slider-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .value-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(91, 110, 225, 0.22), rgba(79, 174, 120, 0.22));
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            border: 3px solid #fff;
+            box-shadow: 0 8px 18px rgba(63, 85, 207, 0.28);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            border: 3px solid #fff;
+            box-shadow: 0 8px 18px rgba(63, 85, 207, 0.28);
+            cursor: pointer;
+        }
+
+        .start-shell {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 2px;
+        }
+
+        .btn-primary {
+            min-height: 56px;
+            border: none;
+            border-radius: 18px;
+            padding: 0 24px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            box-shadow: 0 14px 28px rgba(63, 85, 207, 0.24);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 20px;
+            border-radius: 999px;
+            background: rgba(24, 34, 53, 0.08);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--accent-deep), var(--accent), #7ba2ff);
+            box-shadow: 0 10px 24px rgba(63, 85, 207, 0.26);
+            transition: width 0.15s linear;
+        }
+
+        .progress-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .metrics-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .model-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border-radius: 999px;
+            background: rgba(91, 110, 225, 0.12);
+            color: var(--accent-deep);
+            font-weight: 800;
+        }
+
+        .metrics-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .metric-row {
+            display: grid;
+            grid-template-columns: minmax(150px, 0.9fr) minmax(0, 1.1fr);
+            gap: 14px;
+            align-items: center;
+            padding: 13px 14px;
+            border-radius: 18px;
+            background: #fff;
+            border: 1px solid rgba(24, 34, 53, 0.08);
+        }
+
+        .metric-row span:first-child {
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .metric-row strong {
+            font-size: 1rem;
+            color: #253044;
+            word-break: break-word;
+        }
+
+        .prediction-card {
+            min-height: 720px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+
+        .prediction-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .prediction-shell {
+            overflow: hidden;
+            border: 1px solid rgba(24, 34, 53, 0.12);
+            border-radius: 22px;
+            background: #fff;
+            min-height: 600px;
+        }
+
+        .prediction-frame {
+            width: 100%;
+            height: 100%;
+            min-height: 600px;
+            border: 0;
+            display: block;
+            background: #fff;
+        }
+
+        .helper-note {
+            margin-top: 8px;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 1080px) {
+            .hero-row,
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-panel {
+                padding: 22px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .prediction-card {
+                min-height: 620px;
+            }
+
+            .prediction-shell,
+            .prediction-frame {
+                min-height: 520px;
+            }
+
+            .metrics-head,
+            .prediction-meta,
+            .value-row,
+            .progress-meta {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .metric-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <a class="back-link" href="sippulse-service-home.html">
+                <i class="fas fa-arrow-left"></i>
+                Back to Service Home
+            </a>
+            <div class="module-pill">
+                <i class="fas fa-chart-line"></i>
+                03 Emotional Trend Prediction
+            </div>
+        </header>
+
+        <main class="module-panel">
+            <section class="hero-row">
+                <div class="hero-copy">
+                    <div class="eyebrow">
+                        <i class="fas fa-microchip"></i>
+                        Forecast orchestration
+                    </div>
+                    <h1>Emotional trend prediction</h1>
+                    <p>
+                        Configure a forecasting model, simulate training, and inspect the model-specific emotional trend projection in one workspace.
+                    </p>
+                </div>
+
+                <aside class="brand-summary">
+                    <div class="brand-chip">
+                        <span class="brand-mark"><i class="fas fa-wave-square"></i></span>
+                        <span>Nayuki social signals</span>
+                    </div>
+                    <div class="summary-note">
+                        <strong>Prediction scope</strong>
+                        <p>All models share the same four-source sentiment history and switch the prediction view according to the selected training configuration.</p>
+                    </div>
+                </aside>
+            </section>
+
+            <section class="workspace-shell">
+                <div class="workspace-grid">
+                    <div class="left-stack">
+                        <article class="config-card">
+                            <h2>Model selection</h2>
+                            <div class="control-group">
+                                <label for="model-select">Choose forecasting model</label>
+                                <select class="control-select" id="model-select">
+                                    <option value="anova">ANOVA</option>
+                                    <option value="lstm">LSTM</option>
+                                    <option value="rnn">RNN</option>
+                                    <option value="gradientboosting">Gradient Boosting</option>
+                                </select>
+                            </div>
+                        </article>
+
+                        <article class="config-card">
+                            <h2>Learning rate</h2>
+                            <div class="slider-block">
+                                <div class="value-row">
+                                    <strong>Current value</strong>
+                                    <strong id="learning-rate-value">0.00010</strong>
+                                </div>
+                                <input id="learning-rate" type="range" min="0" max="100" step="1" value="50">
+                                <div class="slider-meta">
+                                    <span>0.00001</span>
+                                    <span>0.00100</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="config-card">
+                            <h2>Batch size</h2>
+                            <div class="control-group">
+                                <label for="batch-size">Mini-batch configuration</label>
+                                <select class="control-select" id="batch-size">
+                                    <option value="16">16</option>
+                                    <option value="32" selected>32</option>
+                                    <option value="64">64</option>
+                                    <option value="128">128</option>
+                                </select>
+                            </div>
+                        </article>
+
+                        <article class="config-card">
+                            <h2>Number of training rounds</h2>
+                            <div class="slider-block">
+                                <div class="value-row">
+                                    <strong>Current value</strong>
+                                    <strong id="rounds-value">50</strong>
+                                </div>
+                                <input id="training-rounds" type="range" min="1" max="100" step="1" value="50">
+                                <div class="slider-meta">
+                                    <span>1</span>
+                                    <span>100</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="config-card">
+                            <h2>Training set ratio</h2>
+                            <div class="slider-block">
+                                <div class="value-row">
+                                    <strong>Current value</strong>
+                                    <strong id="training-ratio-value">80%</strong>
+                                </div>
+                                <input id="training-ratio" type="range" min="0" max="100" step="1" value="80">
+                                <div class="slider-meta">
+                                    <span>0%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <p class="helper-note">The slider is a UI control here. The embedded result keeps using the model’s generated prediction file.</p>
+                        </article>
+
+                        <div class="start-shell">
+                            <button class="btn-primary" id="start-training" type="button">
+                                <i class="fas fa-play"></i>
+                                Start Training
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="right-stack">
+                        <article class="progress-card">
+                            <h2>Training progress</h2>
+                            <div class="progress-track" aria-hidden="true">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <div class="progress-meta">
+                                <span id="progress-label">Ready to start</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                        </article>
+
+                        <article class="metrics-card">
+                            <div class="metrics-head">
+                                <h2>The trained model</h2>
+                                <div class="model-tag" id="trained-model-tag">
+                                    <i class="fas fa-gear"></i>
+                                    <span>ANOVA</span>
+                                </div>
+                            </div>
+                            <div class="metrics-grid">
+                                <div class="metric-row"><span>Creation time</span><strong id="metric-creation-time">2026-04-26 14:21:01 CST</strong></div>
+                                <div class="metric-row"><span>Training duration</span><strong id="metric-training-duration">2022-07 to 2025-09</strong></div>
+                                <div class="metric-row"><span>Accuracy rate</span><strong id="metric-accuracy">0.9343</strong></div>
+                                <div class="metric-row"><span>F1 points</span><strong id="metric-f1">0.9015</strong></div>
+                                <div class="metric-row"><span>Precision</span><strong id="metric-precision">0.9015</strong></div>
+                                <div class="metric-row"><span>Records used</span><strong id="metric-records">4411</strong></div>
+                                <div class="metric-row"><span>Source counts</span><strong id="metric-sources">{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}</strong></div>
+                            </div>
+                        </article>
+
+                        <article class="prediction-card">
+                            <div>
+                                <h2>Prediction result</h2>
+                                <div class="prediction-meta">
+                                    <span id="prediction-model-label">Displaying ANOVA prediction</span>
+                                    <span id="prediction-file-label">sentiment_trend_anova_prediction_future.html</span>
+                                </div>
+                            </div>
+                            <div class="prediction-shell">
+                                <iframe
+                                    class="prediction-frame"
+                                    id="prediction-frame"
+                                    src="sentiment_trend_prediction/sentiment_trend_anova_prediction_future.html"
+                                    title="Emotional trend prediction result"
+                                ></iframe>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        (function () {
+            const models = {
+                anova: {
+                    name: "ANOVA",
+                    frame: "sentiment_trend_prediction/sentiment_trend_anova_prediction_future.html",
+                    file: "sentiment_trend_anova_prediction_future.html",
+                    metrics: {
+                        creationTime: "2026-04-26 14:21:01 CST",
+                        trainingDuration: "2022-07 to 2025-09",
+                        accuracy: "0.9343",
+                        f1: "0.9015",
+                        precision: "0.9015",
+                        records: "4411",
+                        sources: "{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}",
+                    },
+                },
+                lstm: {
+                    name: "LSTM",
+                    frame: "sentiment_trend_prediction/sentiment_trend_lstm_prediction_future.html",
+                    file: "sentiment_trend_lstm_prediction_future.html",
+                    metrics: {
+                        creationTime: "2026-04-26 14:21:02 CST",
+                        trainingDuration: "2022-07 to 2025-09",
+                        accuracy: "0.9565",
+                        f1: "0.9365",
+                        precision: "0.9128",
+                        records: "4411",
+                        sources: "{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}",
+                    },
+                },
+                rnn: {
+                    name: "RNN",
+                    frame: "sentiment_trend_prediction/sentiment_trend_rnn_prediction_future.html",
+                    file: "sentiment_trend_rnn_prediction_future.html",
+                    metrics: {
+                        creationTime: "2026-04-26 14:21:19 CST",
+                        trainingDuration: "2022-07 to 2025-09",
+                        accuracy: "0.9659",
+                        f1: "0.9495",
+                        precision: "0.9385",
+                        records: "4411",
+                        sources: "{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}",
+                    },
+                },
+                gradientboosting: {
+                    name: "Gradient Boosting",
+                    frame: "sentiment_trend_prediction/sentiment_trend_grandientboosting_prediction_future.html",
+                    file: "sentiment_trend_grandientboosting_prediction_future.html",
+                    metrics: {
+                        creationTime: "2026-04-26 14:21:20 CST",
+                        trainingDuration: "2022-07 to 2025-09",
+                        accuracy: "0.9483",
+                        f1: "0.9225",
+                        precision: "0.9210",
+                        records: "4411",
+                        sources: "{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}",
+                    },
+                },
+            };
+
+            const modelSelect = document.getElementById("model-select");
+            const batchSize = document.getElementById("batch-size");
+            const learningRate = document.getElementById("learning-rate");
+            const trainingRounds = document.getElementById("training-rounds");
+            const trainingRatio = document.getElementById("training-ratio");
+            const startButton = document.getElementById("start-training");
+            const progressFill = document.getElementById("progress-fill");
+            const progressLabel = document.getElementById("progress-label");
+            const progressPercent = document.getElementById("progress-percent");
+            const predictionFrame = document.getElementById("prediction-frame");
+            const predictionModelLabel = document.getElementById("prediction-model-label");
+            const predictionFileLabel = document.getElementById("prediction-file-label");
+            const trainedModelTag = document.getElementById("trained-model-tag").querySelector("span");
+
+            const metricCreationTime = document.getElementById("metric-creation-time");
+            const metricTrainingDuration = document.getElementById("metric-training-duration");
+            const metricAccuracy = document.getElementById("metric-accuracy");
+            const metricF1 = document.getElementById("metric-f1");
+            const metricPrecision = document.getElementById("metric-precision");
+            const metricRecords = document.getElementById("metric-records");
+            const metricSources = document.getElementById("metric-sources");
+
+            const learningRateValue = document.getElementById("learning-rate-value");
+            const roundsValue = document.getElementById("rounds-value");
+            const trainingRatioValue = document.getElementById("training-ratio-value");
+
+            let trainingTimer = null;
+            let animationFrame = null;
+
+            function formatLearningRate(sliderValue) {
+                const minLog = Math.log10(0.00001);
+                const maxLog = Math.log10(0.001);
+                const ratio = Number(sliderValue) / 100;
+                const exponent = minLog + (maxLog - minLog) * ratio;
+                return (10 ** exponent).toFixed(5);
+            }
+
+            function updateSliderLabels() {
+                learningRateValue.textContent = formatLearningRate(learningRate.value);
+                roundsValue.textContent = trainingRounds.value;
+                trainingRatioValue.textContent = trainingRatio.value + "%";
+            }
+
+            function applyModel(modelKey) {
+                const model = models[modelKey];
+                trainedModelTag.textContent = model.name;
+                metricCreationTime.textContent = model.metrics.creationTime;
+                metricTrainingDuration.textContent = model.metrics.trainingDuration;
+                metricAccuracy.textContent = model.metrics.accuracy;
+                metricF1.textContent = model.metrics.f1;
+                metricPrecision.textContent = model.metrics.precision;
+                metricRecords.textContent = model.metrics.records;
+                metricSources.textContent = model.metrics.sources;
+                predictionFrame.src = model.frame;
+                predictionModelLabel.textContent = "Displaying " + model.name + " prediction";
+                predictionFileLabel.textContent = model.file;
+            }
+
+            function setProgress(value, label) {
+                progressFill.style.width = value + "%";
+                progressPercent.textContent = Math.round(value) + "%";
+                progressLabel.textContent = label;
+            }
+
+            function finishTraining() {
+                const modelKey = modelSelect.value;
+                applyModel(modelKey);
+                const modelName = models[modelKey].name;
+                const batchLabel = batchSize.value;
+                setProgress(100, modelName + " training complete · LR " + formatLearningRate(learningRate.value) + " · Batch " + batchLabel);
+                startButton.disabled = false;
+                startButton.innerHTML = '<i class="fas fa-rotate-right"></i> Start Training';
+            }
+
+            function startTraining() {
+                if (trainingTimer) window.clearTimeout(trainingTimer);
+                if (animationFrame) window.cancelAnimationFrame(animationFrame);
+
+                startButton.disabled = true;
+                startButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Training';
+
+                const duration = 5000;
+                const startTime = performance.now();
+                const modelName = models[modelSelect.value].name;
+                const rounds = trainingRounds.value;
+
+                function tick(now) {
+                    const elapsed = now - startTime;
+                    const ratio = Math.min(elapsed / duration, 1);
+                    const percent = ratio * 100;
+                    setProgress(percent, modelName + " in progress · " + rounds + " rounds");
+
+                    if (ratio < 1) {
+                        animationFrame = window.requestAnimationFrame(tick);
+                    }
+                }
+
+                setProgress(0, modelName + " queued");
+                animationFrame = window.requestAnimationFrame(tick);
+                trainingTimer = window.setTimeout(finishTraining, duration);
+            }
+
+            learningRate.addEventListener("input", updateSliderLabels);
+            trainingRounds.addEventListener("input", updateSliderLabels);
+            trainingRatio.addEventListener("input", updateSliderLabels);
+            startButton.addEventListener("click", startTraining);
+            modelSelect.addEventListener("change", function () {
+                if (!startButton.disabled) {
+                    applyModel(modelSelect.value);
+                    setProgress(0, "Ready to start");
+                }
+            });
+
+            updateSliderLabels();
+            applyModel(modelSelect.value);
+            setProgress(0, "Ready to start");
+        }());
+    </script>
+</body>
+</html>
