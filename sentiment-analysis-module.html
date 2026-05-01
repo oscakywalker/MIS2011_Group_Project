@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipPulse Sentiment Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #0f1a2b;
+            --bg-ink: #1b2a42;
+            --panel: rgba(255, 255, 255, 0.96);
+            --panel-soft: #f6f8fc;
+            --text-main: #182235;
+            --text-muted: #68758c;
+            --line: rgba(24, 34, 53, 0.12);
+            --accent: #5b6ee1;
+            --accent-deep: #3f55cf;
+            --positive: #4fae78;
+            --neutral: #6e7581;
+            --negative: #e34d4d;
+            --shadow: 0 28px 60px rgba(8, 16, 29, 0.24);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Manrope", "Noto Sans SC", sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(91, 110, 225, 0.24), transparent 24%),
+                radial-gradient(circle at 86% 12%, rgba(79, 174, 120, 0.14), transparent 20%),
+                linear-gradient(140deg, var(--bg-deep) 0%, var(--bg-ink) 58%, #314760 100%);
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        .page-shell {
+            max-width: 1420px;
+            margin: 0 auto;
+            padding: 30px 20px 48px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .back-link,
+        .module-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 999px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            font-size: 0.95rem;
+        }
+
+        .module-pill {
+            background: linear-gradient(135deg, rgba(91, 110, 225, 0.34), rgba(79, 174, 120, 0.18));
+        }
+
+        .module-panel {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 34px;
+            box-shadow: var(--shadow);
+            padding: 34px;
+        }
+
+        .hero-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+            gap: 24px;
+            align-items: start;
+            margin-bottom: 28px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: "Space Grotesk", "Noto Sans SC", sans-serif;
+            letter-spacing: 0;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: rgba(91, 110, 225, 0.12);
+            color: var(--accent-deep);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2.2rem, 4vw, 3.7rem);
+            line-height: 1.04;
+            margin-bottom: 14px;
+        }
+
+        .hero-copy p {
+            max-width: 780px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .brand-summary {
+            display: grid;
+            gap: 14px;
+        }
+
+        .brand-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            width: fit-content;
+            padding: 12px 18px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid var(--line);
+            box-shadow: 0 16px 30px rgba(22, 32, 49, 0.08);
+            font-weight: 800;
+        }
+
+        .brand-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+        }
+
+        .summary-note {
+            background: linear-gradient(135deg, #1d2940, #334c70);
+            color: #f5f7fb;
+            border-radius: 24px;
+            padding: 22px;
+            min-height: 132px;
+        }
+
+        .summary-note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .summary-note p {
+            color: rgba(245, 247, 251, 0.78);
+            font-size: 0.95rem;
+        }
+
+        .filter-panel,
+        .trend-panel,
+        .segmentation-panel {
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #ffffff, #f8faff);
+            border-radius: 28px;
+            box-shadow: 0 18px 38px rgba(20, 30, 45, 0.08);
+        }
+
+        .filter-panel {
+            padding: 26px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .title-block h2 {
+            font-size: clamp(1.45rem, 2vw, 2rem);
+        }
+
+        .title-block p {
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) auto;
+            gap: 16px;
+            align-items: end;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .field label {
+            font-weight: 800;
+            color: #2b3446;
+        }
+
+        .field select,
+        .field input {
+            width: 100%;
+            min-height: 54px;
+            border: 1px solid rgba(24, 34, 53, 0.14);
+            border-radius: 16px;
+            padding: 0 16px;
+            background: #fff;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .btn-primary,
+        .toggle-btn {
+            border: none;
+            cursor: pointer;
+            font-weight: 800;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .btn-primary {
+            min-height: 54px;
+            padding: 0 22px;
+            border-radius: 16px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            box-shadow: 0 14px 28px rgba(63, 85, 207, 0.24);
+        }
+
+        .btn-primary:hover,
+        .toggle-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            border: 1px solid var(--line);
+            border-radius: 26px;
+            padding: 22px;
+            min-height: 156px;
+            background: #fff;
+            box-shadow: 0 16px 32px rgba(20, 30, 45, 0.07);
+        }
+
+        .metric-card .mini-line {
+            width: 68px;
+            height: 3px;
+            border-radius: 999px;
+            background: rgba(24, 34, 53, 0.18);
+            margin-bottom: 22px;
+        }
+
+        .metric-card strong {
+            display: block;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(2rem, 3vw, 2.8rem);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .metric-card span {
+            display: block;
+            color: var(--text-muted);
+            font-weight: 800;
+        }
+
+        .metric-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .positive strong {
+            color: var(--positive);
+        }
+
+        .neutral strong {
+            color: var(--neutral);
+        }
+
+        .negative strong {
+            color: var(--negative);
+        }
+
+        .trend-panel,
+        .segmentation-panel {
+            padding: 28px;
+            margin-bottom: 26px;
+        }
+
+        .trend-actions {
+            display: inline-flex;
+            gap: 8px;
+            padding: 6px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #fff;
+        }
+
+        .toggle-btn {
+            min-height: 42px;
+            padding: 0 16px;
+            border-radius: 13px;
+            color: var(--text-muted);
+            background: transparent;
+        }
+
+        .toggle-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            box-shadow: 0 10px 22px rgba(63, 85, 207, 0.2);
+        }
+
+        .trend-frame-shell {
+            overflow: hidden;
+            border: 1px solid rgba(24, 34, 53, 0.12);
+            border-radius: 20px;
+            background: #fff;
+            min-height: 680px;
+            padding-top: 14px;
+        }
+
+        .trend-frame {
+            display: none;
+            width: 100%;
+            height: 660px;
+            border: 0;
+            vertical-align: top;
+        }
+
+        .trend-frame.active {
+            display: block;
+        }
+
+        .legend-note {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 18px 20px;
+            border-radius: 20px;
+            color: #f6f8fc;
+            background: linear-gradient(135deg, #4b5669, #656b70);
+            font-weight: 800;
+        }
+
+        .legend-note b {
+            color: #ffd35a;
+        }
+
+        .table-tools {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .table-count {
+            color: var(--text-muted);
+            font-weight: 800;
+        }
+
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: #fff;
+            max-height: 620px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 980px;
+        }
+
+        th,
+        td {
+            padding: 16px 18px;
+            text-align: left;
+            border-bottom: 1px solid rgba(24, 34, 53, 0.08);
+            vertical-align: top;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: #f4f7fb;
+            font-size: 0.92rem;
+            color: #2b3446;
+            font-weight: 900;
+        }
+
+        td {
+            color: #263246;
+        }
+
+        .comment-cell {
+            max-width: 440px;
+        }
+
+        .comment-text {
+            line-height: 1.5;
+        }
+
+        .comment-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #eef2f8;
+            font-weight: 800;
+        }
+
+        .stars {
+            color: #f4b33d;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        .score-pill {
+            display: inline-flex;
+            min-width: 74px;
+            justify-content: center;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: #eef2f8;
+            font-weight: 900;
+        }
+
+        .polarity-positive {
+            color: var(--positive);
+            background: rgba(79, 174, 120, 0.12);
+        }
+
+        .polarity-neutral {
+            color: var(--neutral);
+            background: rgba(110, 117, 129, 0.12);
+        }
+
+        .polarity-negative {
+            color: var(--negative);
+            background: rgba(227, 77, 77, 0.12);
+        }
+
+        .tone {
+            font-weight: 900;
+            color: #253044;
+        }
+
+        .empty-state {
+            padding: 28px;
+            text-align: center;
+            color: var(--text-muted);
+            font-weight: 800;
+        }
+
+        @media (max-width: 980px) {
+            .hero-row,
+            .filter-grid,
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-panel {
+                padding: 22px;
+            }
+
+            .section-title,
+            .table-tools,
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .trend-actions {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .trend-frame {
+                height: 620px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <a class="back-link" href="sippulse-service-home.html">
+                <i class="fas fa-arrow-left"></i>
+                Back to Service Home
+            </a>
+            <div class="module-pill">
+                <i class="fas fa-chart-line"></i>
+                01 Sentiment Analysis
+            </div>
+        </header>
+
+        <main class="module-panel">
+            <section class="hero-row">
+                <div class="hero-copy">
+                    <div class="eyebrow">
+                        <i class="fas fa-wave-square"></i>
+                        Emotional segmentation
+                    </div>
+                    <h1>Sentiment Analysis</h1>
+                    <p>
+                        Review brand comments across social sources, quantify positive, neutral, and negative signals, and inspect tone-level records for follow-up analysis.
+                    </p>
+                </div>
+                <aside class="brand-summary">
+                    <div class="brand-chip">
+                        <span class="brand-mark"><i class="fas fa-magnifying-glass-chart"></i></span>
+                        <span id="brand-name">Nayuki</span>
+                    </div>
+                    <div class="summary-note">
+                        <strong>Service enterprise</strong>
+                        <p>The brand name is inherited from the home page enterprise search when this module is opened.</p>
+                    </div>
+                </aside>
+            </section>
+
+            <section class="filter-panel" aria-labelledby="screening-title">
+                <div class="section-title">
+                    <div class="title-block">
+                        <h2 id="screening-title">Screening conditions</h2>
+                        <p>Filter analysis records by time window and social media source.</p>
+                    </div>
+                </div>
+                <div class="filter-grid">
+                    <div class="field">
+                        <label for="time-filter">Time</label>
+                        <select id="time-filter">
+                            <option value="total">Total time</option>
+                            <option value="year">Recent year</option>
+                            <option value="month">Recent month</option>
+                            <option value="week">Recent week</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="source-filter">Data source</label>
+                        <select id="source-filter">
+                            <option value="all">All sources</option>
+                            <option value="rednote">Rednote</option>
+                            <option value="douyin">TikTok / Douyin</option>
+                            <option value="weibo">Weibo</option>
+                            <option value="dianping">Dianping</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" id="apply-filters" type="button">
+                        <i class="fas fa-magnifying-glass"></i>
+                        Search
+                    </button>
+                </div>
+            </section>
+
+            <section class="metric-grid" aria-label="Sentiment count metrics">
+                <article class="metric-card positive">
+                    <div class="mini-line"></div>
+                    <strong id="positive-count">0</strong>
+                    <span>Positive emotion</span>
+                    <p id="positive-share">0.0% of selected comments</p>
+                </article>
+                <article class="metric-card neutral">
+                    <div class="mini-line"></div>
+                    <strong id="neutral-count">0</strong>
+                    <span>Neutral emotion</span>
+                    <p id="neutral-share">0.0% of selected comments</p>
+                </article>
+                <article class="metric-card negative">
+                    <div class="mini-line"></div>
+                    <strong id="negative-count">0</strong>
+                    <span>Negative emotion</span>
+                    <p id="negative-share">0.0% of selected comments</p>
+                </article>
+                <article class="metric-card">
+                    <div class="mini-line"></div>
+                    <strong id="total-count">0</strong>
+                    <span>Total analysis volume</span>
+                    <p id="total-scope">All time · All sources</p>
+                </article>
+            </section>
+
+            <section class="segmentation-panel" aria-labelledby="segmentation-title">
+                <div class="section-title">
+                    <div class="title-block">
+                        <h2 id="segmentation-title">Emotional segmentation</h2>
+                        <p>Comment-level polarity, model confidence, and fine-grained tone labels.</p>
+                    </div>
+                </div>
+                <div class="legend-note">
+                    <div>Star Rating: 1-2 <b>★</b> -> negative · 3 <b>★</b> -> neutral · 4-5 <b>★</b> -> positive</div>
+                    <div>Types of tone: Plain / Concern / Happy / Angry / Sad / Questioning / Surprise / Aversive</div>
+                </div>
+                <div class="table-tools">
+                    <div class="table-count" id="table-count">0 comments</div>
+                    <div class="table-count">Scroll inside the table to review all matching comments</div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Comment (Text)</th>
+                                <th>Star Rating</th>
+                                <th>Score</th>
+                                <th>Types of tone</th>
+                                <th>Score</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comment-table-body"></tbody>
+                    </table>
+                    <div class="empty-state" id="empty-state" hidden>No comments match the selected conditions.</div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="assets/generated/sentiment-records.js"></script>
+    <script>
+        (function () {
+            const records = window.SIPPULSE_SENTIMENT_RECORDS || [];
+            const params = new URLSearchParams(window.location.search);
+            const brandName = params.get("brand") || "Nayuki";
+            const timeFilter = document.getElementById("time-filter");
+            const sourceFilter = document.getElementById("source-filter");
+            const tableBody = document.getElementById("comment-table-body");
+            const emptyState = document.getElementById("empty-state");
+            const totalScope = document.getElementById("total-scope");
+            const maxDate = records.reduce((latest, record) => record.date > latest ? record.date : latest, "");
+            const sourceLabels = {
+                all: "All sources",
+                rednote: "Rednote",
+                douyin: "TikTok / Douyin",
+                weibo: "Weibo",
+                dianping: "Dianping",
+            };
+            const timeLabels = {
+                total: "Total time",
+                year: "Recent year",
+                month: "Recent month",
+                week: "Recent week",
+            };
+            const toneLabels = {
+                "平淡语气": "Plain",
+                "关切语调": "Concern",
+                "开心语调": "Happy",
+                "愤怒语调": "Angry",
+                "悲伤语调": "Sad",
+                "疑问语调": "Questioning",
+                "惊奇语调": "Surprise",
+                "厌恶语调": "Aversive",
+            };
+
+            document.getElementById("brand-name").textContent = brandName;
+
+            function parseDate(value) {
+                const parts = value.split("-").map(Number);
+                return new Date(parts[0], parts[1] - 1, parts[2]);
+            }
+
+            function addDays(date, amount) {
+                const copy = new Date(date.getTime());
+                copy.setDate(copy.getDate() + amount);
+                return copy;
+            }
+
+            function formatNumber(value) {
+                return value.toLocaleString("en-US");
+            }
+
+            function currentStartDate() {
+                if (!maxDate || timeFilter.value === "total") return null;
+                const end = parseDate(maxDate);
+                if (timeFilter.value === "year") return addDays(end, -365);
+                if (timeFilter.value === "month") return addDays(end, -30);
+                if (timeFilter.value === "week") return addDays(end, -7);
+                return null;
+            }
+
+            function filteredRecords() {
+                const selectedSource = sourceFilter.value;
+                const startDate = currentStartDate();
+                return records.filter((record) => {
+                    if (selectedSource !== "all" && record.source !== selectedSource) return false;
+                    if (startDate && parseDate(record.date) < startDate) return false;
+                    return true;
+                });
+            }
+
+            function percent(count, total) {
+                if (!total) return "0.0%";
+                return (count / total * 100).toFixed(1) + "%";
+            }
+
+            function starString(rating) {
+                const count = Math.max(0, Math.min(5, Number(rating) || 0));
+                return "★".repeat(count);
+            }
+
+            function sourceLabel(value) {
+                return sourceLabels[value] || value;
+            }
+
+            function polarityClass(value) {
+                return "polarity-" + value;
+            }
+
+            function toneLabel(value) {
+                return toneLabels[value] || value || "Unknown";
+            }
+
+            function renderMetrics(items) {
+                const total = items.length;
+                const counts = items.reduce((acc, item) => {
+                    acc[item.polarity] = (acc[item.polarity] || 0) + 1;
+                    return acc;
+                }, { positive: 0, neutral: 0, negative: 0 });
+
+                document.getElementById("positive-count").textContent = formatNumber(counts.positive);
+                document.getElementById("neutral-count").textContent = formatNumber(counts.neutral);
+                document.getElementById("negative-count").textContent = formatNumber(counts.negative);
+                document.getElementById("total-count").textContent = formatNumber(total);
+                totalScope.textContent = timeLabels[timeFilter.value] + " · " + sourceLabel(sourceFilter.value);
+                document.getElementById("positive-share").textContent = percent(counts.positive, total) + " of selected comments";
+                document.getElementById("neutral-share").textContent = percent(counts.neutral, total) + " of selected comments";
+                document.getElementById("negative-share").textContent = percent(counts.negative, total) + " of selected comments";
+                document.getElementById("table-count").textContent = formatNumber(total) + " comments";
+            }
+
+            function renderTable(items) {
+                const rows = items.map((item) => {
+                    const safeComment = escapeHtml(item.comment || "Empty text");
+                    const nickname = item.nickname ? `<span class="chip"><i class="fas fa-user"></i>${escapeHtml(item.nickname)}</span>` : "";
+                    return `
+                        <tr>
+                            <td class="comment-cell">
+                                <div class="comment-text">${safeComment}</div>
+                                <div class="comment-meta">
+                                    <span class="chip"><i class="fas fa-calendar"></i>${item.date}</span>
+                                    <span class="chip ${polarityClass(item.polarity)}">${item.polarity}</span>
+                                    ${nickname}
+                                </div>
+                            </td>
+                            <td><span class="stars" aria-label="${item.starRating} stars">${starString(item.starRating)}</span></td>
+                            <td><span class="score-pill ${polarityClass(item.polarity)}">${Number(item.sentimentScore).toFixed(6)}</span></td>
+                            <td><span class="tone">${escapeHtml(toneLabel(item.tone))}</span></td>
+                            <td><span class="score-pill">${Number(item.toneScore).toFixed(6)}</span></td>
+                            <td><span class="chip"><i class="fas fa-database"></i>${sourceLabel(item.source)}</span></td>
+                        </tr>
+                    `;
+                }).join("");
+
+                tableBody.innerHTML = rows;
+                emptyState.hidden = items.length > 0;
+            }
+
+            function escapeHtml(value) {
+                return String(value)
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }
+
+            function refresh() {
+                const items = filteredRecords();
+                renderMetrics(items);
+                renderTable(items);
+            }
+
+            document.getElementById("apply-filters").addEventListener("click", refresh);
+            timeFilter.addEventListener("change", refresh);
+            sourceFilter.addEventListener("change", refresh);
+
+            refresh();
+        }());
+    </script>
+</body>
+</html>

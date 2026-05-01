@@ -1,0 +1,214 @@
+{
+  "generated_at": "2026-04-26 16:51:32",
+  "best_model_by_accuracy": "rnn",
+  "latest_month_bucket": "2026-05",
+  "prediction_metrics": {
+    "anova": {
+      "script": "sentiment_trend_anova_prediction.py",
+      "output": "/Users/fujunhan/Desktop/MIS2011/GroupProject/sentiment_trend_prediction/sentiment_trend_anova_prediction.html",
+      "future output": "/Users/fujunhan/Desktop/MIS2011/GroupProject/sentiment_trend_prediction/sentiment_trend_anova_prediction_future.html",
+      "Creation time": "2026-04-26 16:51:14 CST",
+      "date range": "2022-07-01 to 2026-05-12",
+      "granularity": "month",
+      "buckets": "40",
+      "train buckets": "32",
+      "test buckets": "8",
+      "Training duration": "2022-07 to 2025-09",
+      "Accuracy rate": "0.9343",
+      "F1 points": "0.9015",
+      "Precision": "0.9015",
+      "records used": "4411",
+      "source counts": "{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}"
+    },
+    "lstm": {
+      "script": "sentiment_trend_lstm_prediction.py",
+      "output": "/Users/fujunhan/Desktop/MIS2011/GroupProject/sentiment_trend_prediction/sentiment_trend_lstm_prediction.html",
+      "future output": "/Users/fujunhan/Desktop/MIS2011/GroupProject/sentiment_trend_prediction/sentiment_trend_lstm_prediction_future.html",
+      "Creation time": "2026-04-26 16:51:17 CST",
+      "date range": "2022-07-01 to 2026-05-12",
+      "granularity": "month",
+      "buckets": "40",
+      "train buckets": "32",
+      "test buckets": "8",
+      "Training duration": "2022-07 to 2025-09",
+      "Accuracy rate": "0.9565",
+      "F1 points": "0.9365",
+      "Precision": "0.9128",
+      "records used": "4411",
+      "source counts": "{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}"
+    },
+    "rnn": {
+      "script": "sentiment_trend_rnn_prediction.py",
+      "output": "/Users/fujunhan/Desktop/MIS2011/GroupProject/sentiment_trend_prediction/sentiment_trend_rnn_prediction.html",
+      "future output": "/Users/fujunhan/Desktop/MIS2011/GroupProject/sentiment_trend_prediction/sentiment_trend_rnn_prediction_future.html",
+      "Creation time": "2026-04-26 16:51:25 CST",
+      "date range": "2022-07-01 to 2026-05-12",
+      "granularity": "month",
+      "buckets": "40",
+      "train buckets": "32",
+      "test buckets": "8",
+      "Training duration": "2022-07 to 2025-09",
+      "Accuracy rate": "0.9659",
+      "F1 points": "0.9495",
+      "Precision": "0.9385",
+      "records used": "4411",
+      "source counts": "{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}"
+    },
+    "gradientboosting": {
+      "script": "sentiment_trend_grandientboosting_prediction.py",
+      "output": "/Users/fujunhan/Desktop/MIS2011/GroupProject/sentiment_trend_prediction/sentiment_trend_grandientboosting_prediction.html",
+      "future output": "/Users/fujunhan/Desktop/MIS2011/GroupProject/sentiment_trend_prediction/sentiment_trend_grandientboosting_prediction_future.html",
+      "Creation time": "2026-04-26 16:51:32 CST",
+      "date range": "2022-07-01 to 2026-05-12",
+      "granularity": "month",
+      "buckets": "40",
+      "train buckets": "32",
+      "test buckets": "8",
+      "Training duration": "2022-07 to 2025-09",
+      "Accuracy rate": "0.9483",
+      "F1 points": "0.9225",
+      "Precision": "0.9210",
+      "records used": "4411",
+      "backend": "sklearn_gbr_fallback",
+      "source counts": "{'weibo': 1254, 'xhs': 822, 'douyin': 1238, 'dianping': 1097}"
+    }
+  },
+  "future_prediction_endpoints": {
+    "anova": {
+      "source_file": "sentiment_trend_anova_prediction_future.html",
+      "forecast_end": "2026-09",
+      "future_sentiment": {
+        "positive": 72.67,
+        "neutral": 22.46,
+        "negative": 4.86
+      }
+    },
+    "lstm": {
+      "source_file": "sentiment_trend_lstm_prediction_future.html",
+      "forecast_end": "2026-09",
+      "future_sentiment": {
+        "positive": 65.07,
+        "neutral": 20.74,
+        "negative": 8.12
+      }
+    },
+    "rnn": {
+      "source_file": "sentiment_trend_rnn_prediction_future.html",
+      "forecast_end": "2026-09",
+      "future_sentiment": {
+        "positive": 68.58,
+        "neutral": 28.82,
+        "negative": 7.57
+      }
+    },
+    "gradientboosting": {
+      "source_file": "sentiment_trend_grandientboosting_prediction_future.html",
+      "forecast_end": "2026-09",
+      "future_sentiment": {
+        "positive": 70.14,
+        "neutral": 26.97,
+        "negative": 3.81
+      }
+    }
+  },
+  "visual_summaries": {
+    "sentiment_trend": {
+      "source_file": "sentiment_trend.html",
+      "latest_bucket": "2026-05",
+      "latest_sentiment": {
+        "positive": 79.52,
+        "neutral": 18.07,
+        "negative": 2.41
+      }
+    },
+    "risk_monitoring": {
+      "data_source_distribution": {
+        "source_file": "data_source_distribution.html",
+        "traces": [
+          {
+            "name": "data_source_distribution",
+            "top_items": [
+              {
+                "label": "Weibo",
+                "value": 1254.0
+              },
+              {
+                "label": "Douyin",
+                "value": 1238.0
+              },
+              {
+                "label": "Dianping",
+                "value": 1097.0
+              },
+              {
+                "label": "Rednote",
+                "value": 822.0
+              }
+            ]
+          }
+        ]
+      },
+      "emotional_subdivision_distribution": {
+        "source_file": "emotional_subdivision_distribution.html",
+        "traces": [
+          {
+            "name": "emotional_subdivision_distribution",
+            "top_items": [
+              {
+                "label": "Happy",
+                "value": 1257.0
+              },
+              {
+                "label": "Angry",
+                "value": 1181.0
+              },
+              {
+                "label": "Plain",
+                "value": 976.0
+              },
+              {
+                "label": "Aversive",
+                "value": 518.0
+              },
+              {
+                "label": "Sad",
+                "value": 235.0
+              },
+              {
+                "label": "Surprise",
+                "value": 123.0
+              }
+            ]
+          }
+        ]
+      },
+      "emotional_trend_day": {
+        "source_file": "emotional_trend_day.html",
+        "latest_bucket": "2026-05-12",
+        "latest_sentiment": {
+          "positive": 63.64,
+          "neutral": 27.27,
+          "negative": 9.09
+        }
+      },
+      "emotional_trend_week": {
+        "source_file": "emotional_trend_week.html",
+        "latest_bucket": "2026-W19",
+        "latest_sentiment": {
+          "positive": 73.33,
+          "neutral": 20.0,
+          "negative": 6.67
+        }
+      },
+      "emotional_trend_month": {
+        "source_file": "emotional_trend_month.html",
+        "latest_bucket": "2026-05",
+        "latest_sentiment": {
+          "positive": 79.52,
+          "neutral": 18.07,
+          "negative": 2.41
+        }
+      }
+    }
+  }
+}

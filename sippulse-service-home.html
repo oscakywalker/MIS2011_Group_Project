@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipPulse Service Intake</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-start: #14304a;
+            --bg-end: #2b5876;
+            --panel: rgba(255, 255, 255, 0.92);
+            --panel-strong: rgba(255, 255, 255, 0.97);
+            --text-main: #1f2a37;
+            --text-muted: #617084;
+            --accent: #ff7a59;
+            --accent-deep: #eb5c39;
+            --accent-soft: #ffe2d9;
+            --line: rgba(20, 48, 74, 0.1);
+            --shadow: 0 18px 45px rgba(9, 24, 38, 0.22);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.14), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(255, 122, 89, 0.2), transparent 24%),
+                linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            line-height: 1.6;
+        }
+
+        .page-shell {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 32px 20px 48px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #fff;
+        }
+
+        .brand-mark {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff9a76, var(--accent-deep));
+            box-shadow: 0 12px 24px rgba(235, 92, 57, 0.35);
+            font-size: 22px;
+        }
+
+        .brand h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .brand p {
+            font-size: 0.95rem;
+            opacity: 0.84;
+        }
+
+        .account-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            color: #fff;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .nav-pill:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.34);
+        }
+
+        .nav-pill i {
+            font-size: 1rem;
+        }
+
+        .nav-pill-copy {
+            display: grid;
+            gap: 2px;
+        }
+
+        .nav-pill-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .nav-pill-subtitle {
+            font-size: 0.76rem;
+            opacity: 0.8;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.95fr);
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .hero-main,
+        .hero-side,
+        .section-panel {
+            background: var(--panel);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .hero-main {
+            padding: 38px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .hero-main h2 {
+            font-size: clamp(2rem, 4vw, 3.3rem);
+            line-height: 1.08;
+            margin-bottom: 18px;
+        }
+
+        .hero-main p {
+            color: var(--text-muted);
+            max-width: 720px;
+            font-size: 1.02rem;
+            margin-bottom: 28px;
+        }
+
+        .search-panel {
+            background: var(--panel-strong);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 20px;
+        }
+
+        .search-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .search-label h3 {
+            font-size: 1.05rem;
+        }
+
+        .search-label span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        .search-input {
+            flex: 1 1 320px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            border: 1px solid rgba(20, 48, 74, 0.12);
+            border-radius: 16px;
+            padding: 0 16px;
+            min-height: 58px;
+        }
+
+        .search-input i {
+            color: var(--accent-deep);
+        }
+
+        .search-input input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: var(--text-main);
+            background: transparent;
+        }
+
+        .search-actions {
+            flex: 0 1 280px;
+            min-width: 240px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .progress-shell {
+            flex: 0 1 260px;
+            min-width: 220px;
+            display: grid;
+            gap: 8px;
+            align-content: center;
+            padding: 8px 0;
+        }
+
+        .progress-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 0.83rem;
+            color: var(--text-muted);
+        }
+
+        .progress-label {
+            font-weight: 700;
+        }
+
+        .progress-value {
+            font-weight: 800;
+            color: var(--accent-deep);
+        }
+
+        .progress-track {
+            position: relative;
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(20, 48, 74, 0.08);
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(20, 48, 74, 0.06);
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #ffb08d, var(--accent), var(--accent-deep));
+            box-shadow: 0 8px 18px rgba(235, 92, 57, 0.28);
+        }
+
+        .btn-primary {
+            min-height: 58px;
+            padding: 0 24px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+            color: #fff;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 12px 24px rgba(235, 92, 57, 0.26);
+        }
+
+        .btn-primary.is-running {
+            cursor: wait;
+            opacity: 0.92;
+        }
+
+        .btn-primary:hover,
+        .platform-card:hover,
+        .step-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        .metric-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 18px;
+            border: 1px solid var(--line);
+        }
+
+        .metric-card strong {
+            display: block;
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .metric-card span {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+
+        .hero-side {
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            min-height: 540px;
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 540px;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.45s ease;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .carousel-slide::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(16, 31, 45, 0.08) 0%, rgba(16, 31, 45, 0.2) 40%, rgba(16, 31, 45, 0.78) 100%);
+        }
+
+        .carousel-copy {
+            position: absolute;
+            left: 24px;
+            right: 24px;
+            bottom: 82px;
+            z-index: 1;
+            color: #fff;
+        }
+
+        .carousel-copy h3 {
+            font-size: 1.55rem;
+            margin-bottom: 8px;
+        }
+
+        .carousel-copy p {
+            color: rgba(255, 255, 255, 0.86);
+            font-size: 0.96rem;
+            max-width: 320px;
+        }
+
+        .carousel-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(10px);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .carousel-controls {
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .carousel-dot {
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        .carousel-dot:hover {
+            transform: translateY(-2px);
+        }
+
+        .carousel-dots {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.42);
+        }
+
+        .carousel-dot.active {
+            width: 28px;
+            background: #fff;
+        }
+
+        .section-panel {
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .section-head h3 {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+
+        .section-head p {
+            color: var(--text-muted);
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .platform-card {
+            text-decoration: none;
+            color: inherit;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 24px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 10px 22px rgba(20, 48, 74, 0.08);
+        }
+
+        .platform-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: inset 0 0 0 1px rgba(20, 48, 74, 0.06);
+        }
+
+        .platform-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            object-position: center;
+            transform: scale(1.12);
+            transform-origin: center;
+        }
+
+        .xhs .platform-icon img { transform: translate(-1px, 2px) scale(1.12); }
+        .douyin .platform-icon img { transform: translate(0px, -3px) scale(1.12); }
+        .weibo .platform-icon img { transform: translate(-1px, 2px) scale(1.12); }
+        .dianping .platform-icon img { transform: translate(-2px, -2px) scale(1.12); }
+
+        .platform-card h4 {
+            font-size: 1.12rem;
+            margin-bottom: 8px;
+        }
+
+        .platform-card p {
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            min-height: 70px;
+            font-size: 0.94rem;
+        }
+
+        .platform-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-deep);
+            font-weight: 700;
+            font-size: 0.92rem;
+        }
+
+        .xhs .platform-icon { background: linear-gradient(135deg, #ff5f6d, #ff8a5b); }
+        .douyin .platform-icon { background: linear-gradient(135deg, #111827, #00c2ff); }
+        .weibo .platform-icon { background: linear-gradient(135deg, #ff7a18, #ffb347); }
+        .dianping .platform-icon { background: linear-gradient(135deg, #16a34a, #65c466); }
+
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .step-card {
+            display: block;
+            background: #fff;
+            border-radius: 22px;
+            padding: 22px;
+            border: 1px solid var(--line);
+            position: relative;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .step-card h4 {
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+        }
+
+        .step-card p {
+            color: var(--text-muted);
+            font-size: 0.94rem;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.84);
+            font-size: 0.95rem;
+            padding-top: 8px;
+        }
+
+        @media (max-width: 1080px) {
+            .hero,
+            .platform-grid,
+            .pipeline-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-shell {
+                padding: 20px 16px 36px;
+            }
+
+            .topbar,
+            .section-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .account-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .nav-pill {
+                flex: 1 1 220px;
+            }
+
+            .hero,
+            .platform-grid,
+            .pipeline-grid,
+            .hero-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-main,
+            .section-panel {
+                padding: 22px;
+            }
+
+            .hero-side {
+                padding: 0;
+            }
+
+            .hero-main h2 {
+                font-size: 2rem;
+            }
+
+            .search-row {
+                flex-direction: column;
+            }
+
+            .search-actions {
+                width: 100%;
+            }
+
+            .btn-primary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="fas fa-glass-water"></i>
+                </div>
+                <div>
+                    <h1>SipPulse</h1>
+                    <p>Beverage sentiment intelligence and response planning</p>
+                </div>
+            </div>
+            <div class="account-actions">
+                <a class="nav-pill" href="account-login-module.html">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="nav-pill-copy">
+                        <span class="nav-pill-title">Log In</span>
+                        <span class="nav-pill-subtitle" id="account-status-text">Personal workspace</span>
+                    </span>
+                </a>
+                <a class="nav-pill" href="upgrade-plans-module.html">
+                    <i class="fas fa-rocket"></i>
+                    <span class="nav-pill-copy">
+                        <span class="nav-pill-title">Upgrade Plans</span>
+                        <span class="nav-pill-subtitle" id="plan-status-text">View plan options</span>
+                    </span>
+                </a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="hero-main">
+                <div class="eyebrow">
+                    <i class="fas fa-wave-square"></i>
+                    Opinion Monitoring for Beverage Brands
+                </div>
+                <h2>Track your brand perception, detect risk early, and turn feedback into action.</h2>
+                <p>
+                    SipPulse connects social listening, sentiment analysis, risk monitoring, dashboard reporting, and AI-generated response support into one intake flow for beverage enterprises.
+                </p>
+
+                <div class="search-panel">
+                    <div class="search-label">
+                        <h3>Search for the enterprise requesting service</h3>
+                        <span>Example: HeyTea, Starbucks, Nayuki, MIXUE, Goodme, CHAGEE</span>
+                    </div>
+                    <div class="search-row">
+                        <label class="search-input" for="enterprise-search">
+                            <i class="fas fa-magnifying-glass"></i>
+                            <input id="enterprise-search" type="text" placeholder="Enter enterprise name or beverage brand" value="Nayuki">
+                        </label>
+                        <div class="progress-shell" aria-live="polite">
+                            <div class="progress-meta">
+                                <span class="progress-label" id="crawler-progress-label">Crawler Progress</span>
+                                <span class="progress-value" id="crawler-progress-value">0%</span>
+                            </div>
+                            <div class="progress-track" aria-hidden="true">
+                                <div class="progress-fill" id="crawler-progress-fill"></div>
+                            </div>
+                        </div>
+                        <div class="search-actions">
+                            <button class="btn-primary" id="start-assessment-btn" type="button">
+                                <i class="fas fa-arrow-right"></i>
+                                Start Assessment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-metrics">
+                    <div class="metric-card">
+                        <strong>4</strong>
+                        <span>Integrated social media sources</span>
+                    </div>
+                    <div class="metric-card">
+                        <strong>24/7</strong>
+                        <span>Real-time risk watch capability</span>
+                    </div>
+                    <div class="metric-card">
+                        <strong>AI+</strong>
+                        <span>Suggestions, PR drafts, and product ideas</span>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="hero-side">
+                <div class="carousel" id="brand-carousel">
+                    <div class="carousel-slide active" style="background-image: url('https://33030827.s21i.faiusr.com/4/ABUIABAEGAAgzpSlyQYo0LK_7wMwrgg42Aw!1000x1000.png');">
+                        <div class="carousel-copy">
+                            <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" style="background-image: url('https://www.javapresse.com/cdn/shop/articles/JavaPresse_166.webp?v=1715088531&width=780');">
+                        <div class="carousel-copy">
+                            <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" style="background-image: url('https://www.naixue.com/assets/join-us-B0U_hEKv.png');">
+                        <div class="carousel-copy">
+                            <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" style="background-image: url('https://daoinsights.com/wp-content/uploads/2025/02/goodme-2-768x1024.jpg'); background-position: center 42%;">
+                        <div class="carousel-copy">
+                            <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" style="background-image: url('https://pic.rmb.bdstatic.com/bjh/3ea18ff0b318/240911/2a63d08a678cba1e02197ff2a47b81e5.jpeg?x-bce-process=image/watermark,bucket_baidu-rmb-video-cover-1,image_YmpoL25ld3MvNjUzZjZkMjRlMDJiNjdjZWU1NzEzODg0MDNhYTQ0YzQucG5n,type_RlpMYW5UaW5nSGVpU01HQg==,w_31,text_QOeUu-aYjua3oeeahOi-uTFD,size_31,x_24,y_24,interval_2,color_FFFFFF,effect_softoutline,shc_000000,blr_2,align_1'); background-position: center 32%;">
+                        <div class="carousel-copy">
+                            <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                        </div>
+                    </div>
+                    <div class="carousel-slide" style="background-image: url('https://prod-oss.chagee.com.hk/web/uploads/20240829/255d8bfc-9508-4a40-b189-e2cdf7fa7fa8.jpg'); background-position: center 26%;">
+                        <div class="carousel-copy">
+                            <span class="carousel-tag"><i class="fas fa-mug-hot"></i> Drink Campaigns</span>
+                        </div>
+                    </div>
+
+                    <div class="carousel-controls">
+                        <div class="carousel-dots" aria-label="Slide navigation">
+                            <button class="carousel-dot active" type="button" data-slide="0" aria-label="Show slide 1"></button>
+                            <button class="carousel-dot" type="button" data-slide="1" aria-label="Show slide 2"></button>
+                            <button class="carousel-dot" type="button" data-slide="2" aria-label="Show slide 3"></button>
+                            <button class="carousel-dot" type="button" data-slide="3" aria-label="Show slide 4"></button>
+                            <button class="carousel-dot" type="button" data-slide="4" aria-label="Show slide 5"></button>
+                            <button class="carousel-dot" type="button" data-slide="5" aria-label="Show slide 6"></button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="section-panel">
+            <div class="section-head">
+                <div>
+                    <h3>Media Source Modules</h3>
+                    <p>Select a platform module to begin listening, crawling, analysis, or monitoring.</p>
+                </div>
+            </div>
+            <div class="platform-grid">
+                <a class="platform-card xhs" id="rednote-link" href="rednote-module.html?brand=Nayuki">
+                    <div class="platform-icon">
+                        <img src="assets/platform-icons/rednote.jpg" alt="rednote icon">
+                    </div>
+                    <h4>rednote</h4>
+                    <p>Capture lifestyle reviews, taste feedback, packaging discussion, and trend-driven product mentions.</p>
+                    <span class="platform-meta">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        Open Module
+                    </span>
+                </a>
+
+                <a class="platform-card douyin" id="douyin-link" href="douyin-module.html?brand=Nayuki">
+                    <div class="platform-icon">
+                        <img src="assets/platform-icons/douyin.jpg" alt="Douyin icon">
+                    </div>
+                    <h4>TikTok / Douyin</h4>
+                    <p>Monitor short-video buzz, influencer beverage reactions, viral complaints, and campaign traction.</p>
+                    <span class="platform-meta">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        Open Module
+                    </span>
+                </a>
+
+                <a class="platform-card weibo" id="weibo-link" href="weibo-module.html?brand=Nayuki">
+                    <div class="platform-icon">
+                        <img src="assets/platform-icons/weibo.jpg" alt="Weibo icon">
+                    </div>
+                    <h4>Weibo</h4>
+                    <p>Track public opinion spikes, crisis propagation, trending conversations, and official response impact.</p>
+                    <span class="platform-meta">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        Open Module
+                    </span>
+                </a>
+
+                <a class="platform-card dianping" id="dianping-link" href="dianping-module.html?brand=Nayuki">
+                    <div class="platform-icon">
+                        <img src="assets/platform-icons/dianping.jpg" alt="Dianping icon">
+                    </div>
+                    <h4>Dianping</h4>
+                    <p>Review store experience, product quality consistency, service complaints, and local reputation signals.</p>
+                    <span class="platform-meta">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        Open Module
+                    </span>
+                </a>
+            </div>
+        </section>
+
+        <section class="section-panel">
+            <div class="section-head">
+                <div>
+                    <h3>Pipeline Overview</h3>
+                    <p>The page is designed around the end-to-end workflow you described.</p>
+                </div>
+            </div>
+            <div class="pipeline-grid">
+                <a class="step-card" id="sentiment-link" href="sentiment-analysis-module.html?brand=Nayuki">
+                    <div class="step-number">01</div>
+                    <h4>Sentiment Analysis</h4>
+                    <p>Classify feedback, identify emotional polarity, and surface recurring consumer concerns.</p>
+                    <span class="platform-meta">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        Open Module
+                    </span>
+                </a>
+                <a class="step-card" href="risk-monitoring-visualization-module.html">
+                    <div class="step-number">02</div>
+                    <h4>Risk Monitoring Visualization</h4>
+                    <p>Alert on abnormal negative surges, complaint clusters, and fast-spreading reputation topics.</p>
+                    <span class="platform-meta">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        Open Module
+                    </span>
+                </a>
+                <a class="step-card" id="trend-prediction-link" href="emotional-trend-prediction-module.html">
+                    <div class="step-number">03</div>
+                    <h4>Emotional Trend Prediction</h4>
+                    <p>Present brand status, trend lines, and issue distribution in one dashboard.</p>
+                    <span class="platform-meta">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        Open Module
+                    </span>
+                </a>
+                <a class="step-card" id="solutions-link" href="ai-generated-solutions-module.html">
+                    <div class="step-number">04</div>
+                    <h4>AI-Generated Solutions</h4>
+                    <p>Produce improvement suggestions, response strategy, and drafts for teams.</p>
+                    <span class="platform-meta">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        Open Module
+                    </span>
+                </a>
+            </div>
+        </section>
+
+        <div class="footer-note">
+            SipPulse prototype page for enterprise onboarding and social media module selection.
+        </div>
+    </div>
+    <script>
+        (function () {
+            const carousel = document.getElementById("brand-carousel");
+            const searchInput = document.getElementById("enterprise-search");
+            const rednoteLink = document.getElementById("rednote-link");
+            const douyinLink = document.getElementById("douyin-link");
+            const weiboLink = document.getElementById("weibo-link");
+            const dianpingLink = document.getElementById("dianping-link");
+            const sentimentLink = document.getElementById("sentiment-link");
+            const startAssessmentBtn = document.getElementById("start-assessment-btn");
+            const progressFill = document.getElementById("crawler-progress-fill");
+            const progressLabel = document.getElementById("crawler-progress-label");
+            const progressValue = document.getElementById("crawler-progress-value");
+            const accountStatusText = document.getElementById("account-status-text");
+            const planStatusText = document.getElementById("plan-status-text");
+            const defaultBrand = "Nayuki";
+            let progressTimer = null;
+
+            function getBrandName() {
+                const value = searchInput ? searchInput.value.trim() : "";
+                return value || defaultBrand;
+            }
+
+            function updateRednoteLink() {
+                if (!rednoteLink) return;
+                const brandName = getBrandName();
+                rednoteLink.href = "rednote-module.html?brand=" + encodeURIComponent(brandName);
+            }
+
+            function updateWeiboLink() {
+                if (!weiboLink) return;
+                const brandName = getBrandName();
+                weiboLink.href = "weibo-module.html?brand=" + encodeURIComponent(brandName);
+            }
+
+            function updateDouyinLink() {
+                if (!douyinLink) return;
+                const brandName = getBrandName();
+                douyinLink.href = "douyin-module.html?brand=" + encodeURIComponent(brandName);
+            }
+
+            function updateDianpingLink() {
+                if (!dianpingLink) return;
+                const brandName = getBrandName();
+                dianpingLink.href = "dianping-module.html?brand=" + encodeURIComponent(brandName);
+            }
+
+            function updateSentimentLink() {
+                if (!sentimentLink) return;
+                const brandName = getBrandName();
+                sentimentLink.href = "sentiment-analysis-module.html?brand=" + encodeURIComponent(brandName);
+            }
+
+            function updateAccountStatus() {
+                if (!accountStatusText) return;
+
+                try {
+                    const accountName = window.localStorage.getItem("sippulseAccountName");
+                    const accountEmail = window.localStorage.getItem("sippulseAccountEmail");
+                    accountStatusText.textContent = accountName || accountEmail || "Personal workspace";
+                } catch (error) {
+                    accountStatusText.textContent = "Personal workspace";
+                }
+            }
+
+            function updatePlanStatus() {
+                if (!planStatusText) return;
+
+                try {
+                    const planName = window.localStorage.getItem("sippulsePlanName");
+                    planStatusText.textContent = planName ? planName + " active" : "View plan options";
+                } catch (error) {
+                    planStatusText.textContent = "View plan options";
+                }
+            }
+
+            function resetProgressUi(isComplete) {
+                if (!progressFill || !progressLabel || !progressValue || !startAssessmentBtn) return;
+
+                if (isComplete) {
+                    progressFill.style.width = "100%";
+                    progressLabel.textContent = "Crawler simulation complete";
+                    progressValue.textContent = "100%";
+                    startAssessmentBtn.classList.remove("is-running");
+                    startAssessmentBtn.disabled = false;
+                    startAssessmentBtn.innerHTML = '<i class="fas fa-check"></i> Assessment Ready';
+                    return;
+                }
+
+                progressFill.style.width = "0%";
+                progressLabel.textContent = "Crawler Progress";
+                progressValue.textContent = "0%";
+                startAssessmentBtn.classList.remove("is-running");
+                startAssessmentBtn.disabled = false;
+                startAssessmentBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Start Assessment';
+            }
+
+            function startCrawlerSimulation() {
+                if (!progressFill || !progressLabel || !progressValue || !startAssessmentBtn) return;
+                if (progressTimer !== null) return;
+
+                updateRednoteLink();
+                updateDouyinLink();
+                updateWeiboLink();
+                updateDianpingLink();
+                updateSentimentLink();
+                startAssessmentBtn.disabled = true;
+                startAssessmentBtn.classList.add("is-running");
+                startAssessmentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running Crawler';
+                progressLabel.textContent = "Crawler in progress";
+                progressValue.textContent = "0%";
+                progressFill.style.width = "0%";
+
+                const duration = 20000;
+                const stepMs = 100;
+                const startedAt = Date.now();
+
+                progressTimer = window.setInterval(function () {
+                    const elapsed = Date.now() - startedAt;
+                    const ratio = Math.min(elapsed / duration, 1);
+                    const percentage = Math.round(ratio * 100);
+
+                    progressFill.style.width = percentage + "%";
+                    progressValue.textContent = percentage + "%";
+
+                    if (ratio >= 1) {
+                        window.clearInterval(progressTimer);
+                        progressTimer = null;
+                        resetProgressUi(true);
+                    }
+                }, stepMs);
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener("input", updateRednoteLink);
+                searchInput.addEventListener("change", updateRednoteLink);
+                searchInput.addEventListener("input", updateDouyinLink);
+                searchInput.addEventListener("change", updateDouyinLink);
+                searchInput.addEventListener("input", updateWeiboLink);
+                searchInput.addEventListener("change", updateWeiboLink);
+                searchInput.addEventListener("input", updateDianpingLink);
+                searchInput.addEventListener("change", updateDianpingLink);
+                searchInput.addEventListener("input", updateSentimentLink);
+                searchInput.addEventListener("change", updateSentimentLink);
+            }
+
+            if (rednoteLink) {
+                rednoteLink.addEventListener("click", updateRednoteLink);
+            }
+
+            if (douyinLink) {
+                douyinLink.addEventListener("click", updateDouyinLink);
+            }
+
+            if (weiboLink) {
+                weiboLink.addEventListener("click", updateWeiboLink);
+            }
+
+            if (dianpingLink) {
+                dianpingLink.addEventListener("click", updateDianpingLink);
+            }
+
+            if (sentimentLink) {
+                sentimentLink.addEventListener("click", updateSentimentLink);
+            }
+
+            if (startAssessmentBtn) {
+                startAssessmentBtn.addEventListener("click", startCrawlerSimulation);
+            }
+
+            updateRednoteLink();
+            updateDouyinLink();
+            updateWeiboLink();
+            updateDianpingLink();
+            updateSentimentLink();
+            updateAccountStatus();
+            updatePlanStatus();
+            resetProgressUi(false);
+
+            if (!carousel) return;
+
+            const slides = Array.from(carousel.querySelectorAll(".carousel-slide"));
+            const dots = Array.from(carousel.querySelectorAll(".carousel-dot"));
+            let currentIndex = 0;
+            let autoplayId = null;
+
+            function showSlide(index) {
+                currentIndex = (index + slides.length) % slides.length;
+                slides.forEach((slide, slideIndex) => {
+                    slide.classList.toggle("active", slideIndex === currentIndex);
+                });
+                dots.forEach((dot, dotIndex) => {
+                    dot.classList.toggle("active", dotIndex === currentIndex);
+                });
+            }
+
+            function nextSlide() {
+                showSlide(currentIndex + 1);
+            }
+
+            function startAutoplay() {
+                stopAutoplay();
+                autoplayId = window.setInterval(nextSlide, 4000);
+            }
+
+            function stopAutoplay() {
+                if (autoplayId !== null) {
+                    window.clearInterval(autoplayId);
+                    autoplayId = null;
+                }
+            }
+
+            dots.forEach((dot) => {
+                dot.addEventListener("click", function () {
+                    showSlide(Number(dot.dataset.slide));
+                    startAutoplay();
+                });
+            });
+
+            carousel.addEventListener("mouseenter", stopAutoplay);
+            carousel.addEventListener("mouseleave", startAutoplay);
+
+            startAutoplay();
+        }());
+    </script>
+</body>
+</html>
